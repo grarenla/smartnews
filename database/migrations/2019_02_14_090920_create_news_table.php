@@ -21,8 +21,8 @@ class CreateNewsTable extends Migration
             $table->text('source');
             $table->text('content');
             $table->string('author');
-            $table->unsignedInteger('categories_id');
-            $table->foreign('categories_id')->references('id')->on('category');
+            $table->unsignedInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('category');
             $table->timestamps();
             $table->softDeletes();
         });
