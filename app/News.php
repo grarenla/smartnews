@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class News extends Model
 {
@@ -62,7 +63,16 @@ class News extends Model
         } catch (Exception $e) {
             return $e->getMessage();
         }
+    }
 
+    public static function getByCategoryId($id)
+    {
+        try {
+            $list = News::where('category_id', $id)->get();
+            return $list;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
 
     }
 

@@ -17,9 +17,21 @@ class NewsController extends Controller
     public function index()
     {
         $list = News::list();
-        return response()->json([
-            'data' => $list
-        ]);
+        if ($list !== null) {
+            return response()->json(['data' => $list], 200);
+        } else {
+            return response()->json(['data' => $list], 404);
+        }
+    }
+
+    public function listByCategory($id)
+    {
+        $list = News::getByCategoryId($id);
+        if ($list !== null) {
+            return response()->json(['data' => $list], 200);
+        } else {
+            return response()->json(['data' => $list], 404);
+        }
     }
 
     /**
@@ -58,7 +70,11 @@ class NewsController extends Controller
     public function show($id)
     {
         $news = News::getById($id);
-        return response()->json(['data' => $news]);
+        if ($news !== null) {
+            return response()->json(['data' => $news], 200);
+        } else {
+            return response()->json(['data' => $news], 404);
+        }
     }
 
     /**
