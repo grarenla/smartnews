@@ -18,6 +18,7 @@ class CreateNewsTable extends Migration
             $table->text('title');
             $table->text('img');
             $table->text('description');
+            $table->text('source');
             $table->text('content');
             $table->string('author');
             $table->unsignedInteger('categories_id');
