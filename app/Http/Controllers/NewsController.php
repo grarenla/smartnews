@@ -127,7 +127,7 @@ class NewsController extends Controller
             $new = News::getById($id);
             if($new != null){
                 $data = News::deleteNews($new);
-                return response()->json(array('Delete success', 'id' => $data->id), 201);
+                return response()->json(array('Delete success', 'id' => $data->$id), 201);
             }else{
                 return response()->json("News doesn't exist", 404);
             }
