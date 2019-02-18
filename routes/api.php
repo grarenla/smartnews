@@ -17,9 +17,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::middleware('cors')->get('/news', 'NewsController@index');
-Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
-Route::middleware('cors')->get('/category/news/{id}', 'NewsController@listByCategory');
-Route::middleware('cors')->post('/news/insert', 'NewsController@store');
-Route::middleware('cors')->put('/news/edit/{id}', 'NewsController@update');
-Route::middleware('cors')->delete('/news/delete/{id}', 'NewsController@destroy');
+Route::get('/news', 'NewsController@index');
+Route::get('/news/{id}', 'NewsController@show');
+Route::get('/category/news/{id}', 'NewsController@listByCategory');
+Route::post('/news/insert', 'NewsController@store');
+Route::put('/news/edit/{id}', 'NewsController@update');
+Route::delete('/news/delete/{id}', 'NewsController@destroy');
+
+//Route::middleware('cors')->get('/news', 'NewsController@index');
+//Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
+//Route::middleware('cors')->get('/category/news/{id}', 'NewsController@listByCategory');
+//Route::middleware('cors')->post('/news/insert', 'NewsController@store');
+//Route::middleware('cors')->put('/news/edit/{id}', 'NewsController@update');
+//Route::middleware('cors')->delete('/news/delete/{id}', 'NewsController@destroy');
