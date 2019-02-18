@@ -16,7 +16,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $list = News::list();
+        $list = News::paginate(25);
         if ($list !== null) {
             return response()->json(['data' => $list], 200);
         } else {
