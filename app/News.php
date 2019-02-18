@@ -67,7 +67,7 @@ class News extends Model
     public static function getByCategoryId($id)
     {
         try {
-            $list = News::where('category_id', $id)->get();
+            $list = News::where('categories_id', $id)->get();
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
