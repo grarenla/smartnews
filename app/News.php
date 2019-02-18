@@ -33,7 +33,7 @@ class News extends Model
         $news->content = $newsJson['content'];
         $news->source = $newsJson['source'];
         $news->author = $newsJson['author'];
-        $news->category_id = $newsJson['categories_id'];
+        $news->categories_id = $newsJson['categories_id'];
         $news->created_at = Carbon::now();
         $news->updated_at = Carbon::now();
         $news->save();
@@ -47,7 +47,7 @@ class News extends Model
         $news->content = $newsJson['content'];
         $news->source = $newsJson['source'];
         $news->author = $newsJson['author'];
-        $news->category_id = $newsJson['categories_id'];
+        $news->categories_id = $newsJson['categories_id'];
         $news->created_at = Carbon::now();
         $news->updated_at = Carbon::now();
         $news->save();
