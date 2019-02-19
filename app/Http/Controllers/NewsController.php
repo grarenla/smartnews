@@ -50,7 +50,7 @@ class NewsController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RequestNews $request)
     {
         try{
             $newsJson = $request -> json()->all();
