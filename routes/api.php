@@ -23,6 +23,8 @@ Route::get('/category/news/{id}', 'NewsController@listByCategory');
 Route::post('/news/insert', 'NewsController@store');
 Route::put('/news/edit/{id}', 'NewsController@update');
 Route::delete('/news/delete/{id}', 'NewsController@destroy');
+Route::get('/category', 'CategoryController@index');
+
 
 //Route::middleware('cors')->get('/news', 'NewsController@index');
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
