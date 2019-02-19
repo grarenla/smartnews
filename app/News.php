@@ -68,6 +68,7 @@ class News extends Model
     {
         try {
             $list = News::where('categories_id', $id)->paginate(10);
+            $list->setPath('https://smart-new.herokuapp.com/api/news');
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
