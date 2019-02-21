@@ -25,7 +25,7 @@
             <ul class="list">
                 <li class="header">MAIN NAVIGATION</li>
                 <li {{Route::is('dashboard') ? 'class=active' : ''}}>
-                    <a href="/dashboard">
+                    <a href="/">
                         <i class="material-icons">home</i>
                         <span>Home</span>
                     </a>
@@ -37,10 +37,10 @@
                     </a>
                     <ul class="ml-menu">
                         <li  {{Route::is('news.form') ? 'class=active' : ''}}>
-                            <a href="/dashboard/news/create">Post News</a>
+                            <a href="/news/create">Post News</a>
                         </li>
                         <li  {{Route::is('news.list') ? 'class=active' : ''}}>
-                            <a href="/dashboard/news/list">List News</a>
+                            <a href="/news/list">List News</a>
                         </li>
                     </ul>
                 </li>
