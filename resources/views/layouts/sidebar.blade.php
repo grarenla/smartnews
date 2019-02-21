@@ -39,8 +39,8 @@
                         <li  {{Route::is('news.form') ? 'class=active' : ''}}>
                             <a href="/dashboard/news/create">Post News</a>
                         </li>
-                        <li  {{Route::is('news.news') ? 'class=active' : ''}}>
-                            <a href="/dashboard/news">List News</a>
+                        <li  {{Route::is('news.list') ? 'class=active' : ''}}>
+                            <a href="/dashboard/news/list">List News</a>
                         </li>
                     </ul>
                 </li>

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
+use Mpociot\Firebase\SyncsWithFirebase;
 
 class News extends Model
 {
@@ -17,7 +18,7 @@ class News extends Model
     public static function list()
     {
         try {
-            $list = News::all();
+            $list = News::paginate(10);
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -33,7 +34,7 @@ class News extends Model
         $news->content = $newsJson['content'];
         $news->source = $newsJson['source'];
         $news->author = $newsJson['author'];
-        $news->categories_id = $newsJson['categories_id'];
+        $news->category_id = $newsJson['category_id'];
         $news->created_at = Carbon::now();
         $news->updated_at = Carbon::now();
         $news->save();
@@ -47,7 +48,7 @@ class News extends Model
         $news->content = $newsJson['content'];
         $news->source = $newsJson['source'];
         $news->author = $newsJson['author'];
-        $news->categories_id = $newsJson['categories_id'];
+        $news->category_id = $newsJson['category_id'];
         $news->created_at = Carbon::now();
         $news->updated_at = Carbon::now();
         $news->save();
@@ -67,8 +68,9 @@ class News extends Model
     public static function getByCategoryId($id)
     {
         try {
+            $ngrokNews = LinkNgrok::getNgrok();
             $list = News::where('categories_id', $id)->paginate(10);
-            $list->setPath('https://smart-new.herokuapp.com/api/news');
+            $list->setPath($ngrokNews.'/api/news');
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();

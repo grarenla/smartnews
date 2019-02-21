@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RequestNews;
 use App\News;
-use Illuminate\Http\Request;
-use function PHPSTORM_META\elementType;
+use App\LinkNgrok;
 
 class NewsController extends Controller
 {
@@ -14,10 +13,12 @@ class NewsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        $list = News::paginate(25);
-        $list->setPath('https://smart-new.herokuapp.com/api/news');
+        $ngrokNews = LinkNgrok::getNgrok();
+        $list = News::list();
+        $list->setPath($ngrokNews . '/api/news');
         if ($list !== null) {
             return response()->json(['data' => $list], 200);
         } else {
@@ -53,12 +54,12 @@ class NewsController extends Controller
      */
     public function store(RequestNews $request)
     {
-        try{
-            $newsJson = $request -> json()->all();
+        try {
+            $newsJson = $request->json()->all();
             $data = News::installNews($newsJson);
             return response()->json(array('success' => true, 'id' => $data->id), 201);
-        }catch (\Exception $exception){
-            return response()->json($exception -> getMessage(),500);
+        } catch (\Exception $exception) {
+            return response()->json($exception->getMessage(), 500);
         }
     }
 
@@ -101,21 +102,21 @@ class NewsController extends Controller
 
     {
 
-        try{
-                $new = News::getById($id);
-            if($new != null) {
+        try {
+            $new = News::getById($id);
+            if ($new != null) {
                 $newsJson = $request->json()->all();
-                $data = News::updateNews($newsJson,$new);
+                $data = News::updateNews($newsJson, $new);
                 return response()->json(array('success' => true, 'id' => $data->id), 201);
 
-            }else{
+            } else {
                 return response()->json("News doesn't exist", 404);
             }
-        }
-        catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             return response()->json($exception->getMessage(), 400);
         }
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -124,15 +125,15 @@ class NewsController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $new = News::getById($id);
-            if($new != null){
-                $data = News::deleteNews($new);
-                return response()->json(array('Delete success', 'id' => $data->$id), 201);
-            }else{
+            if ($new != null) {
+                News::deleteNews($new);
+                return response()->json(array('Delete success'), 200);
+            } else {
                 return response()->json("News doesn't exist", 404);
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json($exception->getMessage(), 500);
         }
     }
