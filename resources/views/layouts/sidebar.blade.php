@@ -4,11 +4,11 @@
         <!-- User Info -->
         <div class="user-info">
             <div class="image">
-                <img src="/assets/images/user.png" width="48" height="48" alt="User"/>
+                <img src="/assets/images/logo-nal.png" width="48" height="48" alt="User"/>
             </div>
             <div class="info-container">
-                <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">John Doe</div>
-                <div class="email">john.doe@example.com</div>
+                <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">NAL</div>
+                <div class="email">abc.@example.com</div>
                 <div class="btn-group user-helper-dropdown">
                     <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                     <ul class="dropdown-menu pull-right">
@@ -38,6 +38,9 @@
                     <ul class="ml-menu">
                         <li  {{Route::is('news.form') ? 'class=active' : ''}}>
                             <a href="/dashboard/news/create">Post News</a>
+                        </li>
+                        <li  {{Route::is('news.news') ? 'class=active' : ''}}>
+                            <a href="/dashboard/news">List News</a>
                         </li>
                     </ul>
                 </li>
