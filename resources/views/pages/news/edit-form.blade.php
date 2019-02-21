@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    Add news
+    Edit News
 @endsection
 
 @section('extra-css')
@@ -27,21 +27,21 @@
             <div style="padding-left: 0px; padding-right: 0px" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <h2>POST NEWS</h2>
+                        <h2>EDIT NEWS</h2>
                     </div>
                     <div class="body">
 
-                        <form id="form_validation" method="POST" action="/dashboard/news/create">
+                        <form id="form_validation" method="PUT" action="/dashboard/news/{id}/edit">
                             <input type="hidden" name="_token" value="{{csrf_token()}}">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" class="form-control" name="title" required>
+                                    <input type="text" class="form-control" name="title" value="{{$news->title}}" required>
                                     <label class="form-label">Title</label>
                                 </div>
                             </div>
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" class="form-control" name="description" required>
+                                    <input type="text" class="form-control" name="description" value="{{$news->description}}" required>
                                     <label class="form-label">Description</label>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
 
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" class="form-control" name="source" required>
+                                    <input type="text" class="form-control" name="source" value="{{$news->source}}" required>
                                     <label class="form-label">Source</label>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="author" required>
+                                            <input type="text" class="form-control" name="author" value="{{$news->author}}" required>
                                             <label class="form-label">Author</label>
                                         </div>
 
@@ -80,7 +80,9 @@
                                                 <option value="">Category</option>
                                                 @if(! empty($categories))
                                                     @foreach($categories as $category)
-                                                        <option value="{{$category->id}}">{{$category->name}}</option>
+                                                        <option value="{{$category->id}}" {{($news->category_id == $category->id) ? 'selected' : ''}}
+                                                        >
+                                                            {{$category->name}}</option>
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -95,7 +97,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="file" class="form-control" name="img" required>
+                                            <input type="file" class="form-control" name="img" value="{{$news->img}}" required>
 
                                         </div>
                                     </div>

@@ -36,7 +36,7 @@
                         <span>News</span>
                     </a>
                     <ul class="ml-menu">
-                        <li  {{Route::is('news.form') ? 'class=active' : ''}}>
+                        <li  {{Route::is('form.create') ? 'class=active' : ''}}>
                             <a href="/news/create">Post News</a>
                         </li>
                         <li  {{Route::is('news.list') ? 'class=active' : ''}}>

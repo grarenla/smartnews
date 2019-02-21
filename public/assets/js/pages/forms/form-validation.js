@@ -1,11 +1,12 @@
 $(function () {
     $('#form_validation').validate({
         rules: {
-            'checkbox': {
+            'category_id':{
                 required: true
             },
-            'gender': {
-                required: true
+            'content':{
+                required: true,
+
             }
         },
         highlight: function (input) {
@@ -22,12 +23,9 @@ $(function () {
     //Advanced Form Validation
     $('#form_advanced_validation').validate({
         rules: {
-            'date': {
-                customdate: true
-            },
-            'creditcard': {
-                creditcard: true
-            }
+            category_id: {valueNotEquals: "default" }
+        }, messages: {
+            category_id: { valueNotEquals: "Please select an item!" }
         },
         highlight: function (input) {
             $(input).parents('.form-line').addClass('error');
