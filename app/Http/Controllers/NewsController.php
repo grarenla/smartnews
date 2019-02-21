@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RequestNews;
 use App\News;
-use Illuminate\Http\Request;
-use function PHPSTORM_META\elementType;
+use App\LinkNgrok;
 
 class NewsController extends Controller
 {
@@ -14,10 +13,12 @@ class NewsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
+        $ngrokNews = LinkNgrok::getNgrok();
         $list = News::paginate(25);
-        $list->setPath('https://smart-new.herokuapp.com/api/news');
+        $list->setPath( $ngrokNews.'/api/news');
         if ($list !== null) {
             return response()->json(['data' => $list], 200);
         } else {
