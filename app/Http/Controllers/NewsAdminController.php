@@ -17,7 +17,8 @@ class NewsAdminController extends Controller
      */
     public function index()
     {
-        //
+        $list = News::list();
+        return view('pages.news.news', ['list' => $list]);
     }
 
     /**
@@ -33,8 +34,10 @@ class NewsAdminController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+
      * @param RequestNews $request
      * @return \Illuminate\Http\RedirectResponse
+
      */
     public function store(RequestNews $request)
     {
@@ -45,7 +48,7 @@ class NewsAdminController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
 
@@ -67,7 +70,7 @@ class NewsAdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -78,8 +81,8 @@ class NewsAdminController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -90,11 +93,22 @@ class NewsAdminController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+//        return $id;
+        try {
+            $new = News::getById($id);
+            if ($new != null) {
+                $data = News::deleteNews($new);
+                return response()->json(array('Delete success', 'id' => $data->$id), 201);
+            } else {
+                return response()->json("News doesn't exist", 404);
+            }
+        } catch (\Exception $exception) {
+            return response()->json($exception->getMessage(), 500);
+        }
     }
 }

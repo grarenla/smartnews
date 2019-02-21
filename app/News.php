@@ -10,7 +10,7 @@ use Mpociot\Firebase\SyncsWithFirebase;
 
 class News extends Model
 {
-    use SoftDeletes, SyncsWithFirebase;
+    use SoftDeletes;
 
     protected $table = 'news';
     protected $dates = ['deleted_at'];
@@ -18,7 +18,7 @@ class News extends Model
     public static function list()
     {
         try {
-            $list = News::all();
+            $list = News::paginate(10);
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();

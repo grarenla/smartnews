@@ -4,11 +4,11 @@
         <!-- User Info -->
         <div class="user-info">
             <div class="image">
-                <img src="/assets/images/user.png" width="48" height="48" alt="User"/>
+                <img src="/assets/images/logo-nal.png" width="48" height="48" alt="User"/>
             </div>
             <div class="info-container">
-                <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">John Doe</div>
-                <div class="email">john.doe@example.com</div>
+                <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">NAL</div>
+                <div class="email">abc.@example.com</div>
                 <div class="btn-group user-helper-dropdown">
                     <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                     <ul class="dropdown-menu pull-right">
@@ -39,14 +39,18 @@
                         <li  {{Route::is('form.create') ? 'class=active' : ''}}>
                             <a href="/dashboard/news/create">Post News</a>
                         </li>
-                        <li  {{Route::is('form.edit') ? 'class=active' : ''}}>
-                            <a href="/dashboard/news/edit">Edit News</a>
+
+                        {{--<li  {{Route::is('form.edit') ? 'class=active' : ''}}>--}}
+                            {{--<a href="/dashboard/news/edit">Edit News</a>--}}
+                        {{--</li>--}}
+
+                        <li  {{Route::is('news.list') ? 'class=active' : ''}}>
+                            <a href="/dashboard/news/list">List News</a>
+
                         </li>
                     </ul>
-                    <ul class="ml-menu">
-                        <li  {{Route::is('form.edit') ? 'class=active' : ''}}>
-                            <a href="/dashboard/news/edit">Edit News</a>
-                        </li>
+
+
                     </ul>
                 </li>
 
