@@ -36,8 +36,16 @@
                         <span>News</span>
                     </a>
                     <ul class="ml-menu">
-                        <li  {{Route::is('news.form') ? 'class=active' : ''}}>
+                        <li  {{Route::is('form.create') ? 'class=active' : ''}}>
                             <a href="/dashboard/news/create">Post News</a>
+                        </li>
+                        <li  {{Route::is('form.edit') ? 'class=active' : ''}}>
+                            <a href="/dashboard/news/edit">Edit News</a>
+                        </li>
+                    </ul>
+                    <ul class="ml-menu">
+                        <li  {{Route::is('form.edit') ? 'class=active' : ''}}>
+                            <a href="/dashboard/news/edit">Edit News</a>
                         </li>
                     </ul>
                 </li>

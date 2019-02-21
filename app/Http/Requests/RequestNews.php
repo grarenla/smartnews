@@ -33,6 +33,7 @@ class RequestNews extends FormRequest
             'description' => 'required',
             'content' => 'required',
             'source' => 'required',
+            'category_id' => 'required',
 
         ];
     }
@@ -45,6 +46,8 @@ class RequestNews extends FormRequest
             'description.required'  => 'Description is required',
             'content.required' => 'Content is required',
             'source.required' => 'Source is required',
+            'category_id.required' => 'category_id is required',
+
         ];
     }
     protected function failedValidation(Validator $validator)

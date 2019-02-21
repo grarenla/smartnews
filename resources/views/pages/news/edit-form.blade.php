@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    Post News
+    Edit News
 @endsection
 
 @section('extra-css')
@@ -27,11 +27,11 @@
             <div style="padding-left: 0px; padding-right: 0px" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <h2>POST NEWS</h2>
+                        <h2>EDIT NEWS</h2>
                     </div>
                     <div class="body">
 
-                        <form id="form_validation" method="POST" action="/dashboard/news/create">
+                        <form id="form_validation" method="POST" action="/dashboard/news/edit">
                             <input type="hidden" name="_token" value="{{csrf_token()}}">
                             <div class="form-group form-float">
                                 <div class="form-line">
