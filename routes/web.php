@@ -11,6 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+use Illuminate\Support\Facades\Route;
+
+Route::group(['prefix' => '/dashboard'], function () {
+    Route::view('/', 'index')->name('dashboard');
+    Route::group(['prefix'=>'/news'], function () {
+        Route::view('/create', 'pages.news.news-form')->name('news.form');
+    });
 });
