@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => '/dashboard'], function () {
     Route::view('/', 'index')->name('dashboard');
     Route::group(['prefix'=>'/news'], function () {
-        Route::view('/', 'pages.news.form-validation')->name('news.form-validation');
+        Route::view('/create', 'pages.news.news-form')->name('news.form');
     });
 });

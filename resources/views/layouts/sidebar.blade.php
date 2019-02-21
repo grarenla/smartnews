@@ -36,8 +36,8 @@
                         <span>News</span>
                     </a>
                     <ul class="ml-menu">
-                        <li  {{Route::is('news.form-validation') ? 'class=active' : ''}}>
-                            <a href="/dashboard/news">Post News</a>
+                        <li  {{Route::is('news.form') ? 'class=active' : ''}}>
+                            <a href="/dashboard/news/create">Post News</a>
                         </li>
                     </ul>
                 </li>
