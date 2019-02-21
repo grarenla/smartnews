@@ -28,7 +28,7 @@
                         <h2>POST NEWS</h2>
                     </div>
                     <div class="body">
-                        <form id="form_validation" method="POST">
+                        <form id="form_validation" method="POST" action="{{URL::to('/create')}}">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <input type="text" class="form-control" name="title" required>
@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <select class="form-control show-tick">
+                                        <select class="form-control show-tick" required>
                                             <option value="">Category</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
