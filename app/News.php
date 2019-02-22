@@ -68,9 +68,9 @@ class News extends Model
     public static function getByCategoryId($id)
     {
         try {
-            $ngrokNews = LinkNgrok::getNgrok();
-            $list = News::where('categories_id', $id)->paginate(10);
-            $list->setPath($ngrokNews.'/api/news');
+//            $ngrokNews = LinkNgrok::getNgrok();
+            $list = News::where('category_id', $id)->paginate(10);
+//            $list->setPath($ngrokNews.'/api/news');
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();

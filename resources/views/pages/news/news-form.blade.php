@@ -31,7 +31,7 @@
                     </div>
                     <div class="body">
 
-                        <form id="form_validation" method="POST" action="/dashboard/news/create">
+                        <form id="form_validation" method="POST" action="/news/create">
                             <input type="hidden" name="_token" value="{{csrf_token()}}">
                             <div class="form-group form-float">
                                 <div class="form-line">
@@ -47,11 +47,9 @@
                             </div>
 
                             <div class="form-group form-float">
-                                <div class="form-line">
-                                    <label class="">Content</label>
-                                    <textarea class="form-control" id="ckeditor" name="content" required>
-
-                                    </textarea>
+                                <div class="form-inline">
+                                    <label class="form-label">Content</label>
+                                    <textarea class="form-control" id="ckeditor" name="content" required></textarea>
                                 </div>
                             </div>
 
@@ -76,7 +74,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <div class="form-inline">
-                                            <select class="form-control show-tick" name="category_id" >
+                                            <select class="form-control show-tick" name="category_id">
                                                 <option value="">Category</option>
                                                 @if(! empty($categories))
                                                     @foreach($categories as $category)
@@ -91,39 +89,41 @@
 
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="file" class="form-control" name="img" required>
+                            {{--<div class="row">--}}
+                            {{--<div class="col-sm-6">--}}
+                            {{--<div class="form-group form-float">--}}
+                            {{--<div class="form-line">--}}
+                            {{--<input type="file" class="form-control" name="img" required>--}}
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{--<div class="row clearfix">--}}
-                            {{--<div class="col-sm-12">--}}
-                            {{--<div class="input-group">--}}
-                            {{--<div class="dropzone custom-dropzone dz-clickable" id="frm-file-upload" action="https://api.cloudinary.com/v1_1/dqbat91l8/upload">--}}
-                            {{--<div class="dz-message">--}}
-                            {{--<div class="drag-icon-cph">--}}
-                            {{--<i style="font-size: 80px; color: #777" class="fas fa-hand-point-up"></i>--}}
-                            {{--<h3>Drop image here or click to upload.</h3>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<div class="fallback">--}}
-                            {{--<input type="file" name="myImg" multiple="">--}}
-                            {{--<input type="hidden" name='upload_preset' value='b3uy9rh5'>--}}
-                            {{--</div>--}}
                             {{--</div>--}}
                             {{--</div>--}}
                             {{--</div>--}}
                             {{--</div>--}}
 
                             <div class="row clearfix">
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <div class="dropzone custom-dropzone dz-clickable" id="frm-file-upload"
+                                             action="https://api.cloudinary.com/v1_1/dqbat91l8/upload">
+                                            <div class="dz-message">
+                                                <div class="drag-icon-cph">
+                                                    <i style="font-size: 80px; color: #777"
+                                                       class="fas fa-hand-point-up"></i>
+                                                    <h3>Drop image here or click to upload.</h3>
+                                                </div>
+                                            </div>
+                                            <div class="fallback">
+                                                <input type="file" name="myImg" multiple="">
+                                                <input type="hidden" name='upload_preset' value='b3uy9rh5'>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row clearfix">
                                 <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-5">
-                                    <button type="submit" class="btn btn-primary m-t-15 waves-effect">Submit</button>
+                                    <button type="submit" class="btn btn-primary m-t-15 waves-effect" id="btn-submit">Submit</button>
                                 </div>
                             </div>
 
@@ -138,10 +138,14 @@
 @endsection
 
 @section('extra-script')
+    <style>
+        .dz-max-files-reached {background-color: red};
+    </style>
     <script type="text/javascript" src="/assets/plugins/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src="/assets/plugins/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="/assets/js/pages/forms/editors.js"></script>
     <script type="text/javascript" src="/assets/plugins/dropzone/dropzone.min.js"></script>
+    <script type="text/javascript" src="/assets/js/pages/news/form-news.js"></script>
 
     <script type="text/javascript" src="/assets/plugins/jquery-validation/jquery.validate.min.js"></script>
     <script type="text/javascript" src="/assets/plugins/jquery-steps/jquery.steps.min.js"></script>

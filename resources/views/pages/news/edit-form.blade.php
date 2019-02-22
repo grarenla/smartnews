@@ -50,7 +50,7 @@
                                 <div class="form-line">
                                     <label class="">Content</label>
                                     <textarea class="form-control" id="ckeditor" name="content" required>
-
+                                        {{$news->content}}
                                     </textarea>
                                 </div>
                             </div>
@@ -80,9 +80,9 @@
                                                 <option value="">Category</option>
                                                 @if(! empty($categories))
                                                     @foreach($categories as $category)
-                                                        <option value="{{$category->id}}" {{($news->category_id == $category->id) ? 'selected' : ''}}
-                                                        >
-                                                            {{$category->name}}</option>
+                                                        <option value="{{$category->id}}" {{($news->category_id == $category->id) ? 'selected' : ''}}>
+                                                            {{$category->name}}
+                                                        </option>
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -93,35 +93,43 @@
 
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="file" class="form-control" name="img" value="{{$news->img}}" required>
+                            {{--<div class="row">--}}
+                                {{--<div class="col-sm-6">--}}
+                                    {{--<div class="form-group form-float">--}}
+                                        {{--<div class="form-line">--}}
+                                            {{--<input type="file" class="form-control" name="img" value="{{$news->img}}" required>--}}
 
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+
+                            <div class="row clearfix">
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <div class="dropzone custom-dropzone dz-clickable" id="frm-file-upload"
+                                             action="https://api.cloudinary.com/v1_1/dqbat91l8/upload">
+                                            <div class="dz-message">
+                                                <div class="drag-icon-cph">
+                                                    <i style="font-size: 80px; color: #777"
+                                                       class="fas fa-hand-point-up"></i>
+                                                    <h3>Drop image here or click to upload.</h3>
+                                                </div>
+                                            </div>
+                                            <div class="fallback">
+                                                <input type="file" name="myImg" multiple="">
+                                                <input type="hidden" name='upload_preset' value='b3uy9rh5'>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {{--<div class="row clearfix">--}}
-                            {{--<div class="col-sm-12">--}}
-                            {{--<div class="input-group">--}}
-                            {{--<div class="dropzone custom-dropzone dz-clickable" id="frm-file-upload" action="https://api.cloudinary.com/v1_1/dqbat91l8/upload">--}}
-                            {{--<div class="dz-message">--}}
-                            {{--<div class="drag-icon-cph">--}}
-                            {{--<i style="font-size: 80px; color: #777" class="fas fa-hand-point-up"></i>--}}
-                            {{--<h3>Drop image here or click to upload.</h3>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<div class="fallback">--}}
-                            {{--<input type="file" name="myImg" multiple="">--}}
-                            {{--<input type="hidden" name='upload_preset' value='b3uy9rh5'>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
+                            <div style="display: none;">
+                                @if(! empty($news) && $news->img)
+                                    <input type="hidden" name="imgUrl" class="urlImg edit-img" value="{{$news->img}}" id="url-image">
+                                @endif
+                            </div>
 
                             <div class="row clearfix">
                                 <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-5">
@@ -144,6 +152,7 @@
     <script type="text/javascript" src="/assets/plugins/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="/assets/js/pages/forms/editors.js"></script>
     <script type="text/javascript" src="/assets/plugins/dropzone/dropzone.min.js"></script>
+    <script type="text/javascript" src="/assets/js/pages/news/edit.js"></script>
 
     <script type="text/javascript" src="/assets/plugins/jquery-validation/jquery.validate.min.js"></script>
     <script type="text/javascript" src="/assets/plugins/jquery-steps/jquery.steps.min.js"></script>
