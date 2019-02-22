@@ -40,7 +40,7 @@
                             <a href="/news/create">Post News</a>
                         </li>
                         <li  {{Route::is('news.list') ? 'class=active' : ''}}>
-                            <a href="/news/list">List News</a>
+                            <a href="/news">List News</a>
                         </li>
                     </ul>
                 </li>

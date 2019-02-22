@@ -64,7 +64,7 @@
                                                 </td>
                                                 <td>{{$new->source}}</td>
                                                 <td class="text-center js-sweetalert js-modal-buttons">
-                                                    <a href="/news/{{$new->id}}/edit" class="btn btn-link waves-effect">
+                                                    <a href="/news/edit/{{$new->id}}" class="btn btn-link waves-effect">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     <button class="btn btn-link waves-effect" type="button" data-type="ajax-loader" data-p="{{$new}}">

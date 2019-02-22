@@ -87,7 +87,9 @@ class NewsAdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $a = $request->json()->all();
+        var_dump($request['title']);
+//        dd($request);
     }
 
     /**

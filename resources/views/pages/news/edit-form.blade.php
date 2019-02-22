@@ -31,7 +31,7 @@
                     </div>
                     <div class="body">
 
-                        <form id="form_validation" method="PUT" action="/dashboard/news/{id}/edit">
+                        <form id="form_validation" method="POST" action="/news/edit/{id}">
                             <input type="hidden" name="_token" value="{{csrf_token()}}">
                             <div class="form-group form-float">
                                 <div class="form-line">
@@ -125,9 +125,9 @@
                                 </div>
                             </div>
 
-                            <div style="display: none;">
+                            <div style="display: none;" id="url-images">
                                 @if(! empty($news) && $news->img)
-                                    <input type="hidden" name="imgUrl" class="urlImg edit-img" value="{{$news->img}}" id="url-image">
+                                    <input type="hidden" name="urlImg" class="urlImg edit-img" value="{{$news->img}}">
                                 @endif
                             </div>
 

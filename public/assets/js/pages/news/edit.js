@@ -13,7 +13,15 @@ $(function () {
         },
         success: function (file, res) {
             console.log(res);
-            $('#url-image').val(res.url);
+            $("#url-images > input[name='urlImg']").remove();
+            var ip = document.createElement("input");
+            ip.setAttribute("type", "hidden");
+            ip.setAttribute("class", "urlImg");
+            ip.setAttribute("name", file.name);
+            ip.value = res.url;
+            var urlImages = document.getElementById("url-images");
+            urlImages.appendChild(ip);
+            // $('#url-image').val(res.url);
         },
 
         init: function () {
@@ -29,13 +37,24 @@ $(function () {
              */
             // var r = 0;
             // var _this = this;
-            var input = $('#url-image');
-            var mockFile = {name: input.attr('name'), size: 1, type: 'image/jpeg'};
-            this.emit("addedfile", mockFile);
-            this.emit("thumbnail", mockFile, input.val());
-            this.emit("complete", mockFile);
-            this.files.push(mockFile);
-            console.log(this.files.length);
+            // var input = $('#url-image');
+            // var mockFile = {name: input.attr('name'), size: 1, type: 'image/jpeg'};
+            // this.emit("addedfile", mockFile);
+            // this.emit("thumbnail", mockFile, input.val());
+            // this.emit("complete", mockFile);
+            // this.files.push(mockFile);
+            // console.log(this.files.length);
+
+            var _this = this;
+
+            var inputs = document.getElementById("url-images").querySelectorAll(".edit-img");
+            for(var i=0; i< inputs.length; i++){
+                var mockFile = { name: 'urlImg', size: 1, type: 'image/jpeg' };
+                _this.emit("addedfile", mockFile);
+                _this.emit("thumbnail", mockFile, inputs[i].value);
+                _this.emit("complete", mockFile);
+                _this.files.push( mockFile );
+            }
             // if (this.files.length === 0) {
             //     this.on("success", function (file, res) {
             //         console.log(res);
@@ -47,18 +66,14 @@ $(function () {
             // }
             this.on("removedfile", function (file) {
                 console.log(file.name);
-                $('#url-image').removeAttr('value');
-                console.log();
-                // $("#url-images > input[name='"+ file.name +"']").remove();
-                // if(r === 0) validateImages(document.getElementById("frm-file-upload"), getValueImages());
+                $("#url-images > input[name='"+ file.name +"']").remove();
             });
             this.on("maxfilesexceeded", function(file){
-                alert("No more files please!");
+                alert("You can only choose 1 photo!");
                 this.removeFile(file);
             });
 
-            // input.val(this.files[0].url);
-            // console.log(input.val());
+
         }
     };
 });
