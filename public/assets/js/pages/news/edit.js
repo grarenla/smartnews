@@ -13,15 +13,14 @@ $(function () {
         },
         success: function (file, res) {
             console.log(res);
-            $("#url-images > input[name='urlImg']").remove();
-            var ip = document.createElement("input");
-            ip.setAttribute("type", "hidden");
-            ip.setAttribute("class", "urlImg");
-            ip.setAttribute("name", file.name);
-            ip.value = res.url;
-            var urlImages = document.getElementById("url-images");
-            urlImages.appendChild(ip);
-            // $('#url-image').val(res.url);
+            $("#url-images > input[name='img']").val(res.url);
+            // var ip = document.createElement("input");
+            // ip.setAttribute("type", "hidden");
+            // ip.setAttribute("class", "urlImg");
+            // ip.setAttribute("name", 'img');
+            // ip.value = res.url;
+            // var urlImages = document.getElementById("url-images");
+            // urlImages.appendChild(ip);
         },
 
         init: function () {
@@ -35,45 +34,24 @@ $(function () {
              * khi đó event removedfile sẽ đc trigger nhưng r =1 (ko gọi validateImages).
              * @type {number}
              */
-            // var r = 0;
-            // var _this = this;
-            // var input = $('#url-image');
-            // var mockFile = {name: input.attr('name'), size: 1, type: 'image/jpeg'};
-            // this.emit("addedfile", mockFile);
-            // this.emit("thumbnail", mockFile, input.val());
-            // this.emit("complete", mockFile);
-            // this.files.push(mockFile);
-            // console.log(this.files.length);
-
             var _this = this;
 
             var inputs = document.getElementById("url-images").querySelectorAll(".edit-img");
             for(var i=0; i< inputs.length; i++){
-                var mockFile = { name: 'urlImg', size: 1, type: 'image/jpeg' };
+                var mockFile = { name: 'img', size: 1, type: 'image/jpeg' };
                 _this.emit("addedfile", mockFile);
                 _this.emit("thumbnail", mockFile, inputs[i].value);
                 _this.emit("complete", mockFile);
                 _this.files.push( mockFile );
             }
-            // if (this.files.length === 0) {
-            //     this.on("success", function (file, res) {
-            //         console.log(res);
-            //         // console.log(this.files.length);
-            //         // $('#url-image').val(file.url);
-            //         // console.log($('#url-image').val());
-            //         // validateImages(document.getElementById("frm-file-upload"), getValueImages());
-            //     });
-            // }
             this.on("removedfile", function (file) {
                 console.log(file.name);
-                $("#url-images > input[name='"+ file.name +"']").remove();
+                $("#url-images > input[name='"+ file.name +"']").val('');
             });
             this.on("maxfilesexceeded", function(file){
                 alert("You can only choose 1 photo!");
                 this.removeFile(file);
             });
-
-
         }
     };
 });

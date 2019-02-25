@@ -29,9 +29,14 @@
                     <div class="header">
                         <h2>EDIT NEWS</h2>
                     </div>
+                    @if(session('notification'))
+                        <div class="alert alert-success text-center">
+                            {{session('notification')}}
+                        </div>
+                    @endif
                     <div class="body">
 
-                        <form id="form_validation" method="POST" action="/news/edit/{id}">
+                        <form id="form_validation" method="POST" action="/news/edit/{{$news->id}}">
                             <input type="hidden" name="_token" value="{{csrf_token()}}">
                             <div class="form-group form-float">
                                 <div class="form-line">
@@ -125,11 +130,23 @@
                                 </div>
                             </div>
 
-                            <div style="display: none;" id="url-images">
-                                @if(! empty($news) && $news->img)
-                                    <input type="hidden" name="urlImg" class="urlImg edit-img" value="{{$news->img}}">
-                                @endif
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="" id="url-images">
+                                            @if(! empty($news) && $news->img)
+                                                <input type="hidden" name="img" class="urlImg edit-img" value="{{$news->img}}" required>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                            {{--<div style="display: none;" id="url-images">--}}
+                                {{--@if(! empty($news) && $news->img)--}}
+                                    {{--<input type="hidden" name="img" class="urlImg edit-img" value="{{$news->img}}">--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
 
                             <div class="row clearfix">
                                 <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-5">

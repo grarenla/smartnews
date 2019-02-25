@@ -34,15 +34,13 @@ class NewsAdminController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-
      * @param RequestNews $request
      * @return \Illuminate\Http\RedirectResponse
-
      */
     public function store(RequestNews $request)
     {
         News::installNews($request);
-        return  Redirect::route('news.form');
+        return Redirect::route('news.form');
     }
 
     /**
@@ -52,16 +50,19 @@ class NewsAdminController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function createView() {
+    public function createView()
+    {
         $categories = Category::list();
         return view('pages.news.news-form', ['categories' => $categories]);
     }
 
-    public function editView($id) {
+    public function editView($id)
+    {
         $news = News::getById($id);
         $categories = Category::list();
-        return view('pages.news.edit-form', ['news'=>$news,'categories' => $categories]);
+        return view('pages.news.edit-form', ['news' => $news, 'categories' => $categories]);
     }
+
     public function show($id)
     {
         //
@@ -81,15 +82,23 @@ class NewsAdminController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param RequestNews $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(RequestNews $request, $id)
     {
-        $a = $request->json()->all();
-        var_dump($request['title']);
-//        dd($request);
+        try {
+            $news = News::getById($id);
+            if ($news != null) {
+                News::updateNews($request, $news);
+                return redirect('/news/edit/'.$news->id)->with('notification', 'Edit success.');
+            } else {
+                return response()->json("News doesn't exist", 404);
+            }
+        } catch (\Exception $exception) {
+            return response()->json($exception->getMessage(), 400);
+        }
     }
 
     /**

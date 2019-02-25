@@ -28,7 +28,7 @@ class RequestNews extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|unique:news',
+            'title' => 'required',
             'img' => 'required',
             'description' => 'required',
             'content' => 'required',
@@ -41,7 +41,6 @@ class RequestNews extends FormRequest
     {
         return [
             'title.required' => 'Title is required',
-            'title.unique' => 'Title is existed',
             'img.required'  => 'Image is required',
             'description.required'  => 'Description is required',
             'content.required' => 'Content is required',

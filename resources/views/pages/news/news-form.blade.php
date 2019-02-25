@@ -90,14 +90,14 @@
                             </div>
 
                             {{--<div class="row">--}}
-                            {{--<div class="col-sm-6">--}}
-                            {{--<div class="form-group form-float">--}}
-                            {{--<div class="form-line">--}}
-                            {{--<input type="file" class="form-control" name="img" required>--}}
+                                {{--<div class="col-sm-6">--}}
+                                    {{--<div class="form-group form-float">--}}
+                                        {{--<div class="form-line">--}}
+                                            {{--<input type="file" class="form-control" name="img" required>--}}
 
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
                             {{--</div>--}}
 
                             <div class="row clearfix">
@@ -121,6 +121,16 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="">
+                                            <input type="hidden" class="form-control" name="img" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row clearfix">
                                 <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-5">
                                     <button type="submit" class="btn btn-primary m-t-15 waves-effect" id="btn-submit">Submit</button>
@@ -138,9 +148,6 @@
 @endsection
 
 @section('extra-script')
-    <style>
-        .dz-max-files-reached {background-color: red};
-    </style>
     <script type="text/javascript" src="/assets/plugins/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src="/assets/plugins/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="/assets/js/pages/forms/editors.js"></script>

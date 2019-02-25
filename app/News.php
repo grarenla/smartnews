@@ -18,7 +18,7 @@ class News extends Model
     public static function list()
     {
         try {
-            $list = News::paginate(10);
+            $list = News::join('category', 'category.id', 'news.category_id')->select('category.id as category_id', 'category.name as category_name', 'news.*')->paginate(10);
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -42,6 +42,7 @@ class News extends Model
     }
     public static function updateNews($newsJson,$news)
     {
+
         $news->title = $newsJson['title'];
         $news->img = $newsJson['img'];
         $news->description = $newsJson['description'];
@@ -49,7 +50,6 @@ class News extends Model
         $news->source = $newsJson['source'];
         $news->author = $newsJson['author'];
         $news->category_id = $newsJson['category_id'];
-        $news->created_at = Carbon::now();
         $news->updated_at = Carbon::now();
         $news->save();
         return $news;

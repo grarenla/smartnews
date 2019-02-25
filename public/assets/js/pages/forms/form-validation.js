@@ -8,6 +8,9 @@ $(function () {
             },
             content: {
                 required: true,
+            },
+            img: {
+                required: true
             }
         },
         highlight: function (input) {
@@ -25,6 +28,3 @@ $(function () {
         }
     });
 });
-// $('#btn-submit').click(function () {
-//     $(this).attr('disabled', '');
-// });
