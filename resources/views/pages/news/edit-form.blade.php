@@ -142,125 +142,6 @@
                                 <div class="col-sm-5"></div>
                             </div>
                         </form>
-                        {{--<form id="form_news" name="form_news" method="POST" action="/news/edit/{{$news->id}}">--}}
-                            {{--<input type="hidden" name="_token" value="{{csrf_token()}}">--}}
-                            {{--<div class="form-group form-float">--}}
-                                {{--<div class="form-line">--}}
-                                    {{--<input type="text" class="form-control" name="title" value="{{$news->title}}" required>--}}
-                                    {{--<label class="form-label">Title</label>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<div class="form-group form-float">--}}
-                                {{--<div class="form-line">--}}
-                                    {{--<input type="text" class="form-control" name="description" value="{{$news->description}}" required>--}}
-                                    {{--<label class="form-label">Description</label>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-                            {{--<div class="form-group form-float">--}}
-                                {{--<div class="form-line">--}}
-                                    {{--<label class="">Content</label>--}}
-                                    {{--<textarea class="form-control" id="ckeditor" name="content" required>--}}
-                                        {{--{{$news->content}}--}}
-                                    {{--</textarea>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-                            {{--<div class="form-group form-float">--}}
-                                {{--<div class="form-line">--}}
-                                    {{--<input type="text" class="form-control" name="source" value="{{$news->source}}" required>--}}
-                                    {{--<label class="form-label">Source</label>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-
-                            {{--<div class="row">--}}
-                                {{--<div class="col-sm-6">--}}
-                                    {{--<div class="form-group form-float">--}}
-                                        {{--<div class="form-line">--}}
-                                            {{--<input type="text" class="form-control" name="author" value="{{$news->author}}" required>--}}
-                                            {{--<label class="form-label">Author</label>--}}
-                                        {{--</div>--}}
-
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                                {{--<div class="col-sm-6">--}}
-                                    {{--<div class="form-group">--}}
-                                        {{--<div class="form-inline">--}}
-                                            {{--<select class="form-control show-tick" name="category_id" >--}}
-                                                {{--<option value="">Category</option>--}}
-                                                {{--@if(! empty($categories))--}}
-                                                    {{--@foreach($categories as $category)--}}
-                                                        {{--<option value="{{$category->id}}" {{($news->category_id == $category->id) ? 'selected' : ''}}>--}}
-                                                            {{--{{$category->name}}--}}
-                                                        {{--</option>--}}
-                                                    {{--@endforeach--}}
-                                                {{--@endif--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-
-                                {{--</div>--}}
-
-                            {{--</div>--}}
-
-                            {{--<div class="row">--}}
-                                {{--<div class="col-sm-6">--}}
-                                    {{--<div class="form-group form-float">--}}
-                                        {{--<div class="form-line">--}}
-                                            {{--<input type="file" class="form-control" name="img" value="{{$news->img}}" required>--}}
-
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-                            {{--<div class="row clearfix">--}}
-                                {{--<div class="col-sm-12">--}}
-                                    {{--<div class="input-group">--}}
-                                        {{--<div class="dropzone custom-dropzone dz-clickable" id="frm-file-upload"--}}
-                                             {{--action="https://api.cloudinary.com/v1_1/dqbat91l8/upload">--}}
-                                            {{--<div class="dz-message">--}}
-                                                {{--<div class="drag-icon-cph">--}}
-                                                    {{--<i style="font-size: 80px; color: #777"--}}
-                                                       {{--class="fas fa-hand-point-up"></i>--}}
-                                                    {{--<h3>Drop image here or click to upload.</h3>--}}
-                                                {{--</div>--}}
-                                            {{--</div>--}}
-                                            {{--<div class="fallback">--}}
-                                                {{--<input type="file" name="myImg" multiple="">--}}
-                                                {{--<input type="hidden" name='upload_preset' value='b3uy9rh5'>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-                            {{--<div class="row">--}}
-                                {{--<div class="col-sm-6">--}}
-                                    {{--<div class="form-group">--}}
-                                        {{--<div class="" id="url-images">--}}
-                                            {{--@if(! empty($news) && $news->img)--}}
-                                                {{--<input type="hidden" name="img" class="urlImg edit-img" value="{{$news->img}}" required>--}}
-                                            {{--@endif--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-                            {{--<div style="display: none;" id="url-images">--}}
-                                {{--@if(! empty($news) && $news->img)--}}
-                                    {{--<input type="hidden" name="img" class="urlImg edit-img" value="{{$news->img}}">--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
-
-                            {{--<div class="row clearfix">--}}
-                                {{--<div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-5">--}}
-                                    {{--<button type="button" class="btn btn-primary m-t-15 waves-effect" id="btn-submit">Submit</button>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
-                        {{--</form>--}}
 
                     </div>
                 </div>
@@ -275,7 +156,6 @@
     <script type="text/javascript" src="/assets/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
     <script type="text/javascript" src="/assets/plugins/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src="/assets/plugins/tinymce/tinymce.min.js"></script>
-    {{--<script type="text/javascript" src="/assets/js/pages/forms/editors.js"></script>--}}
     <script type="text/javascript" src="/assets/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript" src="/assets/js/pages/news/edit.js"></script>
 
