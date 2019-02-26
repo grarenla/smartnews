@@ -43,12 +43,6 @@ class NewsAdminController extends Controller
         return Redirect::route('news.form');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
 
     public function createView()
     {
@@ -62,6 +56,13 @@ class NewsAdminController extends Controller
         $categories = Category::list();
         return view('pages.news.edit-form', ['news' => $news, 'categories' => $categories]);
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
 
     public function show($id)
     {

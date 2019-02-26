@@ -38,7 +38,6 @@ $(function () {
             var _this = this;
 
             var inputs = document.getElementById("url-images").querySelectorAll(".edit-img");
-            // console.log(inputs[0].value);
             for (var i = 0; i < inputs.length; i++) {
                 var mockFile = {name: 'img', size: 1, type: 'image/jpeg'};
                 _this.emit("addedfile", mockFile);
@@ -88,8 +87,7 @@ $("#edit-btn-submit").click(function () {
         };
         console.log(productData);
         var req = new XMLHttpRequest();
-        // console.log("/api/news/edit/" + forms['news_id'].value);
-        req.open("PUT", "/api/news/edit/" + forms['news_id'].value);
+        req.open("PUT", "/api/news/" + forms['news_id'].value);
         req.setRequestHeader("Content-Type", "application/json");
         req.onload = function () {
             console.log(this.responseText);
@@ -98,7 +96,7 @@ $("#edit-btn-submit").click(function () {
                 showNotification("alert-success", "Edit News Successfully", "bottom", "right", "animated bounceIn", "animated bounceOut");
                 setTimeout(function () {
                     location.reload();
-                }, 500);
+                }, 800);
 
             } else {
                 console.log(this.responseText);

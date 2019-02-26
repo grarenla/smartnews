@@ -17,13 +17,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/news', 'NewsController@index');
-Route::get('/news/{id}', 'NewsController@show');
-Route::get('/category/news/{id}', 'NewsController@listByCategory');
-Route::post('/news/insert', 'NewsController@store');
-Route::put('/news/edit/{id}', 'NewsController@update');
-Route::delete('/news/delete/{id}', 'NewsController@destroy');
-Route::get('/category', 'CategoryController@index');
+//API news
+Route::get('/news', 'NewsController@index'); //get list news
+Route::post('/news', 'NewsController@store'); // create a record news
+Route::get('/news/{id}', 'NewsController@show'); // get news by Id
+Route::put('/news/{id}', 'NewsController@update'); // edit news
+Route::delete('/news/{id}', 'NewsController@destroy'); // delete news
+Route::get('/category/news/{id}', 'NewsController@listByCategory'); //get list news by category_id
+
+//API category
+Route::get('/category', 'CategoryController@index'); // list category
 
 
 //Route::middleware('cors')->get('/news', 'NewsController@index');

@@ -4,19 +4,14 @@ function showAjaxLoaderMessage() {
     var news = $(this).data('p');
     console.log(news.id);
     swal({
-        title: "Do you want to delete product: " + news.title,
-        text: "Submit to delete this product",
+        title: "Do you want to delete news: " + news.title,
+        text: "Submit to delete this news",
         type: "info",
         showCancelButton: true,
         closeOnConfirm: false,
         showLoaderOnConfirm: true,
     }, function () {
-        // setTimeout(function () {
-        //     swal({title: "Delete successfully!"}, function () {
-        //         location.reload();
-        //     });
-        // }, 1000);
-        var url = "/api/news/delete/" + news.id;
+        var url = "/api/news/" + news.id;
         console.log(url);
         $.ajax({
             url: url,

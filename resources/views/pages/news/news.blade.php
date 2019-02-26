@@ -19,71 +19,71 @@
                     News
                 </h2>
             </div>
-            {{--<div class="row m-t-20">--}}
-            {{--<div class="col-sm-5 col-xs-5 m-t-15" style='float: right'>--}}
-            {{--<div class="form-group">--}}
-            {{--<div class="form-line">--}}
-            {{--<input type="text" id="search-input" class="form-control" placeholder='Search'>--}}
-            {{--</div>--}}
-            {{--</div>--}}
-            {{--</div>--}}
-            {{--<div class="col-lg-1 col-sm-2 col-xs-1 m-t-15" style='float: right'>--}}
-            {{--<button id="search-btn" class="btn btn-danger btn-circle waves-effect waves-circle waves-float"--}}
-            {{--type="button">--}}
-            {{--<i class="fas fa-search"></i>--}}
-            {{--</button>--}}
-            {{--</div>--}}
-            {{--</div>--}}
+            @if(! empty($list) && count($list->getCollection()) > 0)
 
-            <div class="body">
-                <div class="table-responsive">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th class="text-center">Image</th>
-                                    <th class="text-center">Title</th>
-                                    <th class="text-center">Description</th>
-                                    <th class="text-center">Source</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                                </thead>
-                                <tbody class="text-center">
-                                    @if(! empty($list))
-                                        @foreach($list as $new)
-                                            <tr>
-                                                <th scope="row">{{$new->id}}</th>
-                                                <th align="center">
-                                                    <div style="background-image: url({{$new->img}});background-size: cover; height: 70px; width: 100px;"></div>
-                                                </th>
-                                                <td>{{$new->title}}
-                                                </td>
-                                                <td>{{$new->description}}
-                                                </td>
-                                                <td>{{$new->source}}</td>
-                                                <td class="text-center js-sweetalert js-modal-buttons">
-                                                    <a href="/news/edit/{{$new->id}}" class="btn btn-link waves-effect">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <button class="btn btn-link waves-effect" type="button" data-type="ajax-loader" data-p="{{$new}}">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @endif
-                                </tbody>
-                            </table>
+                <div class="body">
+                    <div class="table-responsive">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="text-center">Image</th>
+                                        <th class="text-center">Title</th>
+                                        <th class="text-center">Description</th>
+                                        <th class="text-center">Source</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+
+                                    @foreach($list as $new)
+                                        <tr>
+                                            <th scope="row">{{$new->id}}</th>
+                                            <th align="center">
+                                                <div style="background-image: url({{$new->img}});background-size: cover; height: 70px; width: 100px;"></div>
+                                            </th>
+                                            <td>{{$new->title}}
+                                            </td>
+                                            <td>{{$new->description}}
+                                            </td>
+                                            <td>{{$new->source}}</td>
+                                            <td class="text-center js-sweetalert js-modal-buttons">
+                                                <a href="/news/edit/{{$new->id}}" class="btn btn-link waves-effect">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-link waves-effect" type="button"
+                                                        data-type="ajax-loader" data-p="{{$new}}">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row text-right">
+                            {{$list}}
                         </div>
                     </div>
-                    <div class="row text-right">
-                        {{$list}}
+                </div>
+            @else
+                <div class="container">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <img src='http://www.idealexchangepawn.com/images/noProductsFound.png' style='width :100%'
+                             alt="">
+                        <h1></h1>
+                        <div style="text-align: center;">
+                            <a href="" class="btn btn-default btn-lg waves-effect">GO TO LIST PRODUCTS</a>
+                        </div>
+                        <h1></h1>
                     </div>
                 </div>
-            </div>
-
+            @endif
         </div>
     </div>
 

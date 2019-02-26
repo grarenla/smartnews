@@ -26,33 +26,44 @@ class News extends Model
     }
 
 
-    public static function installNews($newsJson){
-        $news = new News();
-        $news->title = $newsJson['title'];
-        $news->img = $newsJson['img'];
-        $news->description = $newsJson['description'];
-        $news->content = $newsJson['content'];
-        $news->source = $newsJson['source'];
-        $news->author = $newsJson['author'];
-        $news->category_id = $newsJson['category_id'];
-        $news->created_at = Carbon::now();
-        $news->updated_at = Carbon::now();
-        $news->save();
-        return $news;
-    }
-    public static function updateNews($newsJson,$news)
+    public static function installNews($newsJson)
     {
+        try {
+            $news = new News();
+            $news->title = $newsJson['title'];
+            $news->img = $newsJson['img'];
+            $news->description = $newsJson['description'];
+            $news->content = $newsJson['content'];
+            $news->source = $newsJson['source'];
+            $news->author = $newsJson['author'];
+            $news->category_id = $newsJson['category_id'];
+            $news->created_at = Carbon::now();
+            $news->updated_at = Carbon::now();
+            $news->save();
+            return $news;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
 
-        $news->title = $newsJson['title'];
-        $news->img = $newsJson['img'];
-        $news->description = $newsJson['description'];
-        $news->content = $newsJson['content'];
-        $news->source = $newsJson['source'];
-        $news->author = $newsJson['author'];
-        $news->category_id = $newsJson['category_id'];
-        $news->updated_at = Carbon::now();
-        $news->save();
-        return $news;
+    }
+
+    public static function updateNews($newsJson, $news)
+    {
+        try {
+            $news->title = $newsJson['title'];
+            $news->img = $newsJson['img'];
+            $news->description = $newsJson['description'];
+            $news->content = $newsJson['content'];
+            $news->source = $newsJson['source'];
+            $news->author = $newsJson['author'];
+            $news->category_id = $newsJson['category_id'];
+            $news->updated_at = Carbon::now();
+            $news->save();
+            return $news;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+
     }
 
     public static function getById($id)
@@ -68,9 +79,7 @@ class News extends Model
     public static function getByCategoryId($id)
     {
         try {
-//            $ngrokNews = LinkNgrok::getNgrok();
             $list = News::where('category_id', $id)->paginate(10);
-//            $list->setPath($ngrokNews.'/api/news');
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -83,6 +92,11 @@ class News extends Model
      */
     public static function deleteNews($new)
     {
-        $new -> delete();
+        try {
+            $new->delete();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+
     }
 }

@@ -17,9 +17,7 @@ class NewsController extends Controller
 
     public function index()
     {
-//        $ngrokNews = LinkNgrok::getNgrok();
         $list = News::list();
-//        $list->setPath($ngrokNews . '/api/news');
         if ($list !== null) {
             return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
         } else {
@@ -31,7 +29,7 @@ class NewsController extends Controller
     {
         $list = News::getByCategoryId($id);
         if ($list !== null) {
-            return response()->json(['data' => $list], 200);
+            return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
         } else {
             return response()->json(['data' => $list], 404);
         }
@@ -50,7 +48,7 @@ class NewsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param RequestNews $request
      * @return \Illuminate\Http\Response
      */
     public function store(RequestNews $request)
@@ -94,7 +92,7 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param RequestNews $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -113,7 +111,7 @@ class NewsController extends Controller
                 return response()->json("News doesn't exist", 404);
             }
         } catch (\Exception $exception) {
-            return response()->json($exception->getMessage(), 400);
+            return response()->json($exception->getMessage(), 500);
         }
     }
 
