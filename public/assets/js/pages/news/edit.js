@@ -88,7 +88,7 @@ $("#edit-btn-submit").click(function () {
         };
         console.log(productData);
         var req = new XMLHttpRequest();
-        console.log("http://localhost:8000/api/news/edit/" + forms['news_id'].value);
+        console.log("/api/news/edit/" + forms['news_id'].value);
         req.open("PUT", "http://localhost:8000/api/news/edit/" + forms['news_id'].value);
         req.setRequestHeader("Content-Type", "application/json");
         req.onload = function () {
