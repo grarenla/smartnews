@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="/assets/plugins/dropzone/min/dropzone.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
+
+    <!-- Include Editor style. -->
+    <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 
 @endsection
 
@@ -58,7 +63,7 @@
                                 <div class="col-sm-12">
                                     <div class="input-group">
                                         <div class="form-line">
-                                            <textarea name="content" id="ckeditor">
+                                            <textarea name="content" id="froala-editor">
 
                                             </textarea>
                                         </div>
@@ -149,9 +154,16 @@
 @endsection
 
 @section('extra-script')
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+
+    <!-- Include Editor JS files. -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.pkgd.min.js"></script>
+
     <script type="text/javascript" src="https://unpkg.com/xregexp@4.2.4/xregexp-all.js"></script>
     <script type="text/javascript" src="/assets/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
-    <script type="text/javascript" src="/assets/plugins/ckeditor/ckeditor.js"></script>
+    {{--<script type="text/javascript" src="/assets/plugins/ckeditor/ckeditor.js"></script>--}}
     <script type="text/javascript" src="/assets/plugins/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="/assets/plugins/dropzone/dropzone.min.js"></script>
 

@@ -1,15 +1,36 @@
 const UPLOAD_IMG_URL = "https://api.cloudinary.com/v1_1/dqbat91l8/upload";
 $(function () {
+    $('#froala-editor').froalaEditor({
+        imageUploadParam: 'file',
+        imageUploadMethod: 'POST',
+        imageUploadURL: UPLOAD_IMG_URL,
+        imageUploadParams: {upload_preset: 'b3uy9rh5'},
 
-    CKEDITOR.replace('ckeditor');
-    CKEDITOR.instances.ckeditor.on('contentDom', function () {
-        CKEDITOR.instances.ckeditor.document.on('keyup', function () {
-            console.log(CKEDITOR.instances.ckeditor.getData());
-            validateContent(document.getElementById('ckeditor'));
+    })
+        .on('froalaEditor.image.beforeUpload', function (e, editor, images) {
+            // Return false if you want to stop the image upload.
+        })
+        .on('froalaEditor.image.uploaded', function (e, editor, response) {
+            var url = JSON.parse(response);
+            editor.image.insert(url.url, false, null, editor.image.get(), response);
+            // Image was uploaded to the server.
+            console.log(response);
+            return false;
+        })
+        .on('froalaEditor.image.inserted', function (e, editor, $img, response) {
+            console.log($img);
+            // Image was inserted in the editor.
+        })
+        .on('froalaEditor.image.replaced', function (e, editor, $img, response) {
+            // Image was replaced in the editor.
+        })
+        .on('froalaEditor.image.error', function (e, editor, error, response) {
+            console.log(error);
         });
+    $('#froala-editor').on('froalaEditor.keyup', function (e, editor, keyupEvent) {
+        console.log($(this).froalaEditor('html.get'));
+        validateContent(this);
     });
-    CKEDITOR.config.height = 300;
-
 
     Dropzone.options.frmFileUpload = {
         url: UPLOAD_IMG_URL,
@@ -84,7 +105,7 @@ $("#btn-submit").click(function () {
         var productData = {
             "title": forms['title'].value,
             "description": forms['description'].value,
-            "content": CKEDITOR.instances.ckeditor.getData(),
+            "content": $('#froala-editor').froalaEditor('html.get'),
             "source": forms['source'].value,
             "author": forms['author'].value,
             "category_id": forms['category'].value,
@@ -121,10 +142,18 @@ $("#btn-submit").click(function () {
 });
 
 function showNotification(colorName, text, placementFrom, placementAlign, animateEnter, animateExit) {
-    if (colorName === null || colorName === '') { colorName = 'bg-black'; }
-    if (text === null || text === '') { text = 'Turning standard Bootstrap alerts'; }
-    if (animateEnter === null || animateEnter === '') { animateEnter = 'animated fadeInDown'; }
-    if (animateExit === null || animateExit === '') { animateExit = 'animated fadeOutUp'; }
+    if (colorName === null || colorName === '') {
+        colorName = 'bg-black';
+    }
+    if (text === null || text === '') {
+        text = 'Turning standard Bootstrap alerts';
+    }
+    if (animateEnter === null || animateEnter === '') {
+        animateEnter = 'animated fadeInDown';
+    }
+    if (animateExit === null || animateExit === '') {
+        animateExit = 'animated fadeOutUp';
+    }
     var allowDismiss = true;
 
     $.notify({
@@ -223,8 +252,9 @@ var validateCategory = function (elm) {
 };
 
 var validateContent = function (elm) {
+    console.log(elm);
     var alert = elm.parentElement.parentElement.querySelector("label");
-    if (checkNull(CKEDITOR.instances.ckeditor.getData())) {
+    if (checkNull($(elm).froalaEditor('html.get'))) {
         createAlert(alert, elm, "Please enter Content.");
         return false;
     } else {
@@ -291,12 +321,12 @@ function removeAlert(alert, elm) {
 
 function creatAlertResponseErrorServer(e) {
     var alertError = document.getElementById("alert-error");
-    if(!alertError.className.includes("alert bg-red")){
+    if (!alertError.className.includes("alert bg-red")) {
         alertError.className = "alert bg-red";
     }
     alertError.innerHTML = JSON.parse(e.responseText).message;
 
-    if(document.getElementById('code').className.includes("success")){
+    if (document.getElementById('code').className.includes("success")) {
         document.getElementById('code').className = document.getElementById('code').className.replace("success", "error");
     }
 }

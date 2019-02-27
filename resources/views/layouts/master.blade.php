@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/plugins/node-waves/waves.min.css">
     <link rel="stylesheet" href="/assets/plugins/animate-css/animate.min.css">
+    <style>
+        body {
+            touch-action: auto;
+        }
+    </style>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
@@ -46,7 +51,7 @@
 @yield('extra-script')
 
 <script src="/assets/js/admin.js"></script>
-<script src="/assets/js/demo.js"></script>
+{{--<script src="/assets/js/demo.js"></script>--}}
 
 </body>
 
