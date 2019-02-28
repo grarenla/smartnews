@@ -27,12 +27,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('scrape:zing')
-            ->everyMinute();
-        $schedule->command('scrape:24h')
-            ->everyMinute();
-        $schedule->command('scrape:kenh14')
-            ->everyMinute();
+        // $schedule->command('scrape:zing')
+        //     ->everyMinute();
+        // $schedule->command('scrape:24h')
+        //     ->everyMinute();
+        // $schedule->command('scrape:kenh14')
+        //     ->everyMinute();
         $schedule->command('scrape:vnx')
             ->everyMinute();
         // $schedule->command('inspire')
