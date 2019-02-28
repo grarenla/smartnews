@@ -17,7 +17,8 @@ class NewsAdminController extends Controller
      */
     public function index()
     {
-        $list = News::list();
+//        $list = News::list();
+        $list = [];
         return view('pages.news.news', ['list' => $list]);
     }
 

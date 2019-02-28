@@ -1,32 +1,41 @@
 const UPLOAD_IMG_URL = "https://api.cloudinary.com/v1_1/dqbat91l8/upload";
 $(function () {
     $('#froala-editor').froalaEditor({
+        height: 300,
         imageUploadParam: 'file',
         imageUploadMethod: 'POST',
         imageUploadURL: UPLOAD_IMG_URL,
         imageUploadParams: {upload_preset: 'b3uy9rh5'},
 
+        videoUploadParam: 'file',
+        videoUploadURL: UPLOAD_IMG_URL,
+        videoUploadParams: {upload_preset: 'b3uy9rh5'},
+        videoUploadMethod: 'POST'
     })
-        .on('froalaEditor.image.beforeUpload', function (e, editor, images) {
-            // Return false if you want to stop the image upload.
-        })
         .on('froalaEditor.image.uploaded', function (e, editor, response) {
+            // Image was uploaded to the server.
             var url = JSON.parse(response);
             editor.image.insert(url.url, false, null, editor.image.get(), response);
-            // Image was uploaded to the server.
             console.log(response);
             return false;
         })
-        .on('froalaEditor.image.inserted', function (e, editor, $img, response) {
-            console.log($img);
-            // Image was inserted in the editor.
-        })
-        .on('froalaEditor.image.replaced', function (e, editor, $img, response) {
-            // Image was replaced in the editor.
-        })
         .on('froalaEditor.image.error', function (e, editor, error, response) {
             console.log(error);
-        });
+        })
+        .on('froalaEditor.video.uploaded', function (e, editor, response) {
+            var res = JSON.parse(response);
+            var videoTag = `
+                 <video width="320" height="240" controls>
+                      <source src="${res.url}">
+                 </video>
+                    `;
+            editor.video.insert(videoTag);
+            return false;
+
+        }).on('froalaEditor.video.error', function (e, editor, error, response) {
+
+    });
+
     $('#froala-editor').on('froalaEditor.keyup', function (e, editor, keyupEvent) {
         console.log($(this).froalaEditor('html.get'));
         validateContent(this);

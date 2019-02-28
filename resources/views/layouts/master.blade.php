@@ -51,7 +51,7 @@
 @yield('extra-script')
 
 <script src="/assets/js/admin.js"></script>
-{{--<script src="/assets/js/demo.js"></script>--}}
+<script src="/assets/js/demo.js"></script>
 
 </body>
 

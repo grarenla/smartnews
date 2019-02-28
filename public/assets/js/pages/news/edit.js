@@ -1,14 +1,47 @@
 const UPLOAD_IMG_URL = "https://api.cloudinary.com/v1_1/dqbat91l8/upload";
 $(function () {
 
-    CKEDITOR.replace('ckeditor');
-    CKEDITOR.instances.ckeditor.on('contentDom', function () {
-        CKEDITOR.instances.ckeditor.document.on('keyup', function () {
-            console.log(CKEDITOR.instances.ckeditor.getData());
-            validateContent(document.getElementById('ckeditor'));
-        });
+    $('#froala-editor').froalaEditor({
+        height: 300,
+        imageUploadParam: 'file',
+        imageUploadMethod: 'POST',
+        imageUploadURL: UPLOAD_IMG_URL,
+        imageUploadParams: {upload_preset: 'b3uy9rh5'},
+
+        videoUploadParam: 'file',
+        videoUploadURL: UPLOAD_IMG_URL,
+        videoUploadParams: {upload_preset: 'b3uy9rh5'},
+        videoUploadMethod: 'POST'
+    })
+        .on('froalaEditor.image.uploaded', function (e, editor, response) {
+            // Image was uploaded to the server.
+            var url = JSON.parse(response);
+            editor.image.insert(url.url, false, null, editor.image.get(), response);
+            console.log(response);
+            return false;
+        })
+        .on('froalaEditor.image.error', function (e, editor, error, response) {
+            console.log(error);
+        })
+        .on('froalaEditor.video.uploaded', function (e, editor, response) {
+            var res = JSON.parse(response);
+            var videoTag = `
+                 <video width="320" height="240" controls>
+                      <source src="${res.url}">
+                 </video>
+                    `;
+            editor.video.insert(videoTag);
+            return false;
+
+        }).on('froalaEditor.video.error', function (e, editor, error, response) {
+
     });
-    CKEDITOR.config.height = 300;
+
+    $('#froala-editor').on('froalaEditor.keyup', function (e, editor, keyupEvent) {
+        console.log($(this).froalaEditor('html.get'));
+        console.log(validateContent(this));
+        validateContent(this);
+    });
 
 
     Dropzone.options.frmFileUpload = {
@@ -79,7 +112,7 @@ $("#edit-btn-submit").click(function () {
         var productData = {
             "title": forms['title'].value,
             "description": forms['description'].value,
-            "content": CKEDITOR.instances.ckeditor.getData(),
+            "content": $('#froala-editor').froalaEditor('html.get'),
             "source": forms['source'].value,
             "author": forms['author'].value,
             "category_id": forms['category'].value,
@@ -218,8 +251,9 @@ var validateCategory = function (elm) {
 };
 
 var validateContent = function (elm) {
+    console.log(elm);
     var alert = elm.parentElement.parentElement.querySelector("label");
-    if (checkNull(CKEDITOR.instances.ckeditor.getData())) {
+    if (checkNull($(elm).froalaEditor('html.get'))) {
         createAlert(alert, elm, "Please enter Content.");
         return false;
     } else {

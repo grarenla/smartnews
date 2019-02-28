@@ -71,16 +71,9 @@
                     </div>
                 </div>
             @else
-                <div class="container">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-6">
-                        <img src='http://www.idealexchangepawn.com/images/noProductsFound.png' style='width :100%'
-                             alt="">
-                        <h1></h1>
-                        <div style="text-align: center;">
-                            <a href="" class="btn btn-default btn-lg waves-effect">GO TO LIST PRODUCTS</a>
-                        </div>
-                        <h1></h1>
+                <div class="body">
+                    <div class="row" style="color: red;">
+                        <h1>Không có bài viết.</h1>
                     </div>
                 </div>
             @endif
