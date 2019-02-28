@@ -22,7 +22,7 @@ class CreateNewsTable extends Migration
             $table->text('content');
             $table->string('author');
             $table->unsignedInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('category');
+            $table->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
             $table->softDeletes();
         });
