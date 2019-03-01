@@ -26,22 +26,25 @@ class scrapeDantri extends Command
 
     public $categories = [
 
+        'su-kien',        
+        'xa-hoi',
         'the-gioi',
-        // 'kinh-doanh',
-        // 'the-thao',
-        // 'suc-khoe',
-        // 'doi-song',
-        // 'khoa-hoc',
-        // 'du-lich',
-        // 'phap-luat',
-        // 'tam-su',
-        // 'thoi-su',
+        'the-thao',
+        'giao-duc-khuyen-hoc',
+        'tam-long-nhan-ai',
+        'kinh-doanh',
+        'bat-dong-san',
+        'van-hoa',
+        'giai-tri',
+        'phap-luat',
+        'nhip-song-tre',
+        'suc-khoe',
+        'suc-manh-so',
+        'o-to-xe-may',
+        'tinh-yeu-gioi-tinh',
 
     ];
-    // public $pagearr = [
-    //     '-p1',
-    //     '-p2',
-    // ];
+    
 
 //    public function page($numPage)
 //    {
