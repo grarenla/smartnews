@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
+use Illuminate\Support\Facades\DB;
 
 class scrapeZing extends Command
 {
@@ -74,6 +75,18 @@ class scrapeZing extends Command
                     echo "Posted Zing " . $countnews++ . "\n";
                 }
 
+        }
+
+        $duplicateRecords = DB::table('news')            
+            ->select('title')
+            ->selectRaw('count(`title`) as `occurences`')            
+            ->groupBy('title')
+            ->having('occurences', '>', 1)
+            ->get();
+        
+        foreach($duplicateRecords as $record) {
+            $dontDeleteThisRow  = News::where('title', $record->title)->first();
+            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
         }
         echo "\n" . "Total: " . $countnews . " records" . "\n";
     }
