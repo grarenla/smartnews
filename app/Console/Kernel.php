@@ -17,6 +17,8 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\scrape24h',
         'App\Console\Commands\scrapeKenh14',
         'App\Console\Commands\scrapeVnx',
+        'App\Console\Commands\scrapeDantri',
+        
     ];
 
     /**
@@ -27,14 +29,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('scrape:zing')
-        //     ->everyMinute();
-        // $schedule->command('scrape:24h')
-        //     ->everyMinute();
-        // $schedule->command('scrape:kenh14')
-        //     ->everyMinute();
+        $schedule->command('scrape:zing')
+            ->everyMinute();
+        $schedule->command('scrape:24h')
+            ->everyMinute();
+        $schedule->command('scrape:kenh14')
+            ->everyMinute();
         $schedule->command('scrape:vnx')
             ->everyMinute();
+        $schedule->command('scrape:dantri')
+        ->everyMinute();
         // $schedule->command('inspire')
         //          ->hourly();
     }
