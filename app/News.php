@@ -18,7 +18,7 @@ class News extends Model
     public static function list()
     {
         try {
-            $list = News::join('categories', 'categories.id', 'news.category_id')->select('categories.id as category_id', 'categories.name as category_name', 'news.*')->orderBy('news.id')->paginate(20);
+            $list = News::join('categories', 'categories.id', 'news.category_id')->select('categories.id as category_id', 'categories.name as category_name', 'news.*')->orderBy('news.id', 'desc')->paginate(20);
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
