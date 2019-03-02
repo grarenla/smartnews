@@ -1,1 +1,2 @@
-{{$data->links()}}
+{{-- {{$data->links()}} --}}
+{{$data}}
