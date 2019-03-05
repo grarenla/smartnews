@@ -12,6 +12,7 @@ namespace App\Console\Commands;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrape24H extends Command
 {
@@ -21,6 +22,8 @@ class scrape24H extends Command
      * @var string
      */
     protected $signature = 'scrape:24h';
+    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
 
     /**
      * The console command description.
@@ -30,7 +33,7 @@ class scrape24H extends Command
     protected $description = 'Command description';
 
     public $categories = [
-//        'thoi-su.html',
+
         'tin-tuc-quoc-te-c415.html',
         'kinh-doanh-c161.html',
         'the-thao-c101.html',
@@ -73,7 +76,7 @@ class scrape24H extends Command
      */
     public function handle()
     {
-        $countnews = 1;
+        $countnews = 0;
 
 
         $category = $this->categories;
@@ -84,22 +87,28 @@ class scrape24H extends Command
 
                     return $node->attr('href');
                 });
-                //article.bxDoiSbIt img
-                $img = $crawler->filter('article.bxDoiSbIt img')->each(function ($node) {
-                    return $node->attr('src');
-                });
-                if (isset($img[0])) {
-                    $img = $img[0];
-                } else {
-                    $img = '';
+
+                // waiting 10s
+                echo "\n"."Waiting.... to next ".$category[$i].$pageNumber . "\n";
+                $progressBar = new ProgressBar($this->output, 100);
+                $progressBar->start();
+                $u = 0;
+                while ($u++ < 10) {
+                    sleep(1);
+                    $progressBar->advance(10);
                 }
+                $progressBar->finish();
+
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1, $img);
+                    self::scrapePost($link, $i + 1);
                     echo "Posted 24h " . $countnews++ . "\n";
                 }
             }
         }
+        //delete duplicate
+        News::deletedNewsDuplicate();
+        //count total records
         echo "\n" . "Total: " . $countnews . " records" . "\n";
     }
 
@@ -109,7 +118,7 @@ class scrape24H extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory, $img)
+    public  function scrapePost($url, $idCategory)
     {
         try {
 
@@ -155,6 +164,16 @@ class scrape24H extends Command
                 $content = implode('<p>', array_slice($content, 0, -3));
             } else {
                 $content = '';
+            }
+
+            //article.bxDoiSbIt img
+            $img = $crawler->filter('.nwsHt.nwsUpgrade img')->each(function ($node) {
+                return $node->attr('src');
+            });
+            if (isset($img[0])) {
+                $img = $img[0];
+            } else {
+                $img = $this ->imgDefault;
             }
 
 

@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
-use Mpociot\Firebase\SyncsWithFirebase;
+use Illuminate\Support\Facades\DB;
 
 class News extends Model
 {
@@ -124,16 +124,21 @@ class News extends Model
 
     public static function deletedNewsDuplicate(){
 
+        echo "Waiting to delete Duplicate news...";
+
         $duplicateRecords = DB::table('news')
             ->select('title')
-            ->selectRaw('count(`title`) as `occurences`')
+            ->selectRaw('count(`title`) as `occurrences`')
             ->groupBy('title')
-            ->having('occurences', '>', 1)
+            ->having('occurrences', '>', 1)
             ->get();
 
         foreach($duplicateRecords as $record) {
             $dontDeleteThisRow  = News::where('title', $record->title)->first();
             DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
         }
+        echo "\n"."Done !!!";
+//        DB::table('news')->
+//        ALTER TABLE tmp AUTO_INCREMENT = 3;
     }
 }

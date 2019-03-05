@@ -13,6 +13,7 @@ use App\News;
 use Illuminate\Console\Command;
 use Goutte;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeKenh14 extends Command
 {
@@ -23,6 +24,8 @@ class scrapeKenh14 extends Command
      * @var string
      */
     protected $signature = 'scrape:kenh14';
+    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
 
     /**
      * The console command description.
@@ -34,8 +37,6 @@ class scrapeKenh14 extends Command
     public $categories = [
 //        'thoi-su.html',
         'the-gioi.chn',
-        'xa-hoi.chn',
-        'xa-hoi/phap-luat.chn',
         ' ',
         'sport.chn',
         'suc-khoe-gioi-tinh.chn',
@@ -64,7 +65,7 @@ class scrapeKenh14 extends Command
     public function handle()
     {
 
-        $countnews = 1;
+        $countnews = 0;
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
             $crawler = Goutte::request('GET', 'http://kenh14.vn/' . $category[$i]);
@@ -72,6 +73,17 @@ class scrapeKenh14 extends Command
 
                 return $node->attr('href');
             });
+
+            // waiting 10s
+            echo "\n"."Waiting.... to next ".$category[$i]. "\n";
+            $progressBar = new ProgressBar($this->output, 100);
+            $progressBar->start();
+            $u = 0;
+            while ($u++ < 10) {
+                sleep(1);
+                $progressBar->advance(10);
+            }
+            $progressBar->finish();
 
             foreach ($linkPost as $link) {
                 self::scrapePost($link, $i + 1);
@@ -91,7 +103,7 @@ class scrapeKenh14 extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory)
     {
         try {
             $crawler = Goutte::request('GET', $url);
@@ -134,7 +146,7 @@ class scrapeKenh14 extends Command
             if (isset($img[0])) {
                 $img = $img[0];
             } else {
-                $img = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+                $img = $this ->imgDefault;
             }
 
 //        $author = $crawler->filter('li.the-article-author a')->each(function ($node) {

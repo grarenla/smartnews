@@ -13,7 +13,6 @@ use App\Http\Controllers\NewsController;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
-use function PHPSTORM_META\elementType;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeVnx extends Command
@@ -24,7 +23,8 @@ class scrapeVnx extends Command
      * @var string
      */
     protected $signature = 'scrape:vnx';
-    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
 
 
     /**
@@ -91,13 +91,21 @@ class scrapeVnx extends Command
                     return $node->attr('href');
                 });
 
-                // waiting 20s
-//                 sleep(20);
-//                echo "Waiting.... 20s"."\n" ;
+                // waiting 10s
+               echo "\n"."Waiting.... to next ".$category[$i].$pageNumber . "\n";
+                $progressBar = new ProgressBar($this->output, 100);
+                $progressBar->start();
+                $u = 0;
+                while ($u++ < 10) {
+                    sleep(1);
+                    $progressBar->advance(10);
+                }
+                $progressBar->finish();
+
 
                 foreach ($linkPost as $link) {
                     self::scrapePost($link, $i + 1);
-                    echo "Posted Vnx " . $countnews++ . "\n";
+                    echo "\n"."Posted Vnx " . $countnews++;
                 }
             }
         }
@@ -174,8 +182,8 @@ class scrapeVnx extends Command
                 });
                 if (isset($img[0])) {
                     $img = $img[0];
-                }  else {
-                    $img = $this ->imgDefault;
+                } else {
+                    $img = $this->imgDefault;
                 }
             }
             // .content_detail.fck_detail.width_common

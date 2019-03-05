@@ -7,6 +7,7 @@ use App\News;
 use Illuminate\Console\Command;
 use Goutte;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeZing extends Command
 {
@@ -16,6 +17,8 @@ class scrapeZing extends Command
      * @var string
      */
     protected $signature = 'scrape:zing';
+    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
 
     /**
      * The console command description.
@@ -30,12 +33,10 @@ class scrapeZing extends Command
         'kinh-doanh-tai-chinh.html',
         'the-thao.html',
         'suc-khoe.html',
-
         '',
-      //  'doi-song',
+        'doi-song',
         '',
-      //  'khoa-hoc',
-
+        'khoa-hoc',
         'du-lich.html',
         'phap-luat.html',
 
@@ -59,7 +60,7 @@ class scrapeZing extends Command
      */
     public function handle()
     {
-        $countnews = 1;
+        $countnews = 0;
 
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
@@ -69,13 +70,26 @@ class scrapeZing extends Command
                 return $node->attr('href');
             });
 
+            // waiting 10s
+            echo "\n"."Waiting.... to next ".$category[$i] . "\n";
+            $progressBar = new ProgressBar($this->output, 100);
+            $progressBar->start();
+            $u = 0;
+            while ($u++ < 10) {
+                sleep(1);
+                $progressBar->advance(10);
+            }
+            $progressBar->finish();
+
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1);
-                    echo "Posted Zing " . $countnews++ . "\n";
-                }
+                self::scrapePost($link, $i + 1);
+                echo "Posted Zing " . $countnews++ . "\n";
+            }
+
 
         }
+
 
         //delete duplicate
         News::deletedNewsDuplicate();
@@ -89,7 +103,7 @@ class scrapeZing extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory)
     {
         try {
             $crawler = Goutte::request('GET', $url);
@@ -123,14 +137,21 @@ class scrapeZing extends Command
                 $content = '';
             }
 
-            //td.pic img
+            //cắt chuỗi để tách 2 thẻ article ra
+
+            //Lấy ra chuỗi muốn tách
+            $getString = strstr($content,'<table align=');
+            //thay thế chuỗi muốn tách bằng chuỗi rỗng
+            $content = str_replace($getString,'',$content) ;
+
+
             $img = $crawler->filter('section.main img')->each(function ($node) {
                 return $node->attr('src');
             });
             if (isset($img[0])) {
                 $img = $img[0];
             } else {
-                $img = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+                $img = $this ->imgDefault;
             }
 
 //        $author = $crawler->filter('li.the-article-author a')->each(function ($node) {
@@ -148,7 +169,10 @@ class scrapeZing extends Command
                 'category_id' => $idCategory
             ];
 
-            News::installNews($data);
+           News::installNews($data);
+
+
+
 
         } catch (\Exception $exception) {
             return response()->json($exception->getMessage(), 500);
