@@ -29,7 +29,7 @@ Route::get('/category/news/{id}', 'NewsController@listByCategory'); //get list n
 Route::get('/category', 'CategoryController@index'); // list category
 
 
-//Route::middleware('cors')->get('/news', 'NewsController@index');
+// Route::get('/news', 'NewsController@index')->middleware('cors');
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
 //Route::middleware('cors')->get('/category/news/{id}', 'NewsController@listByCategory');
 //Route::middleware('cors')->post('/news/insert', 'NewsController@store');
