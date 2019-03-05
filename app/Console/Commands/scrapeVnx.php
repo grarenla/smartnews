@@ -13,6 +13,8 @@ use App\Http\Controllers\NewsController;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
+use function PHPSTORM_META\elementType;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeVnx extends Command
 {
@@ -22,6 +24,8 @@ class scrapeVnx extends Command
      * @var string
      */
     protected $signature = 'scrape:vnx';
+    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+
 
     /**
      * The console command description.
@@ -47,6 +51,10 @@ class scrapeVnx extends Command
     public $pagearr = [
         '-p1',
         '-p2',
+        // '-p3',
+        // '-p4',
+        '/p1',
+        '/p2',
     ];
 
 //    public function page($numPage)
@@ -71,19 +79,21 @@ class scrapeVnx extends Command
     /**
      * @return void
      */
+
     public function handle()
     {
-        $countnews = 1;
-
-
+        $countnews = 0;
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
             foreach ($this->pagearr as $pageNumber) {
                 $crawler = Goutte::request('GET', 'https://vnexpress.net/' . $category[$i] . $pageNumber);
                 $linkPost = $crawler->filter('section.sidebar_1 h4.title_news a.icon_commend')->each(function ($node) {
-
                     return $node->attr('href');
                 });
+
+                // waiting 20s
+//                 sleep(20);
+//                echo "Waiting.... 20s"."\n" ;
 
                 foreach ($linkPost as $link) {
                     self::scrapePost($link, $i + 1);
@@ -92,6 +102,9 @@ class scrapeVnx extends Command
             }
         }
 
+        //delete duplicate
+        News::deletedNewsDuplicate();
+        //count total records
         echo "\n" . "Total: " . $countnews . " records" . "\n";
     }
 
@@ -101,7 +114,7 @@ class scrapeVnx extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory)
     {
         try {
 
@@ -124,6 +137,7 @@ class scrapeVnx extends Command
             }
 
             // $slug = str_slug($title);
+            //.description
 
             $description = $crawler->filter('h2.short_intro.txt_666')->each(function ($node) {
                 return $node->text();
@@ -137,10 +151,17 @@ class scrapeVnx extends Command
                 if (isset($description[0])) {
                     $description = $description[0];
                 } else {
-                    $description = '';
+                    $description = $crawler->filter('.description')->each(function ($node) {
+                        return $node->text();
+                    });
+                    if (isset($description[0])) {
+                        $description = $description[0];
+                    } else {
+                        $description = '';
+                    }
+
                 }
             }
-//        $description = str_replace('', '', $description);
 
             $img = $crawler->filter('.fck_detail.width_common.block_ads_connect img')->each(function ($node) {
                 return $node->attr('src');
@@ -148,10 +169,18 @@ class scrapeVnx extends Command
             if (isset($img[0])) {
                 $img = $img[0];
             } else {
-                $img = '';
+                $img = $crawler->filter('.block_thumb_slide_show img')->each(function ($node) {
+                    return $node->attr('src');
+                });
+                if (isset($img[0])) {
+                    $img = $img[0];
+                }  else {
+                    $img = $this ->imgDefault;
+                }
             }
-
-            $content = $crawler->filter('.fck_detail.width_common.block_ads_connect')->each(function ($node) {
+            // .content_detail.fck_detail.width_common
+            //.fck_detail.width_common.block_ads_connect
+            $content = $crawler->filter('.content_detail.fck_detail.width_common')->each(function ($node) {
                 return $node->html();
             });
 
@@ -159,7 +188,16 @@ class scrapeVnx extends Command
 
                 $content = $content[0];
             } else {
-                $content = '';
+                $content = $crawler->filter('.fck_detail.width_common.block_ads_connect')->each(function ($node) {
+                    return $node->html();
+                });
+
+                if (isset($content[0])) {
+
+                    $content = $content[0];
+                } else {
+                    $content = '';
+                }
             }
 
 

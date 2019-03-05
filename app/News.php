@@ -15,6 +15,9 @@ class News extends Model
     protected $table = 'news';
     protected $dates = ['deleted_at'];
 
+    /**
+     * @return string
+     */
     public static function list()
     {
         try {
@@ -26,6 +29,10 @@ class News extends Model
     }
 
 
+    /**
+     * @param $newsJson
+     * @return News|string
+     */
     public static function installNews($newsJson)
     {
         try {
@@ -47,6 +54,11 @@ class News extends Model
 
     }
 
+    /**
+     * @param $newsJson
+     * @param $news
+     * @return string
+     */
     public static function updateNews($newsJson, $news)
     {
         try {
@@ -66,6 +78,10 @@ class News extends Model
 
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getById($id)
     {
         try {
@@ -76,6 +92,10 @@ class News extends Model
         }
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getByCategoryId($id)
     {
         try {
@@ -89,6 +109,7 @@ class News extends Model
 
     /**
      * @param $new
+     * @return string
      */
     public static function deleteNews($new)
     {
@@ -98,5 +119,21 @@ class News extends Model
             return $e->getMessage();
         }
 
+    }
+
+
+    public static function deletedNewsDuplicate(){
+
+        $duplicateRecords = DB::table('news')
+            ->select('title')
+            ->selectRaw('count(`title`) as `occurences`')
+            ->groupBy('title')
+            ->having('occurences', '>', 1)
+            ->get();
+
+        foreach($duplicateRecords as $record) {
+            $dontDeleteThisRow  = News::where('title', $record->title)->first();
+            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
+        }
     }
 }

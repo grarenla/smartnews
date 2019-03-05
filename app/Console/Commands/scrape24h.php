@@ -84,9 +84,18 @@ class scrape24H extends Command
 
                     return $node->attr('href');
                 });
+                //article.bxDoiSbIt img
+                $img = $crawler->filter('article.bxDoiSbIt img')->each(function ($node) {
+                    return $node->attr('src');
+                });
+                if (isset($img[0])) {
+                    $img = $img[0];
+                } else {
+                    $img = '';
+                }
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1);
+                    self::scrapePost($link, $i + 1, $img);
                     echo "Posted 24h " . $countnews++ . "\n";
                 }
             }
@@ -100,22 +109,32 @@ class scrape24H extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public static function scrapePost($url, $idCategory, $img)
     {
         try {
-            $crawler = Goutte::request('GET', $url);
-            $title = $crawler->filter('h1.clrTit')->each(function ($node) {
 
+            $crawler = Goutte::request('GET', $url);
+
+            //.atclTit.mrT10 a
+
+            $title = $crawler->filter('h1.clrTit')->each(function ($node) {
                 return $node->text();
             });
             if (isset($title[0])) {
                 $title = $title[0];
             } else {
-                $title = '';
+                $title = $crawler->filter('.atclTit.mrT10 a')->each(function ($node) {
+                    return $node->text();
+                });
+                if (isset($title[0])) {
+                    $title = $title[0];
+                } else {
+                    $title = '';
+                }
             }
 
             // $slug = str_slug($title);
-
+            //h2.ctTp
             $description = $crawler->filter('h2.ctTp')->each(function ($node) {
                 return $node->text();
             });
@@ -125,14 +144,7 @@ class scrape24H extends Command
                 $description = '';
             }
 
-            $img = $crawler->filter('article.nwsHt.nwsUpgrade img')->each(function ($node) {
-                return $node->attr('src');
-            });
-            if (isset($img[0])) {
-                $img = $img[0];
-            } else {
-                $img = '';
-            }
+
 
             $content = $crawler->filter('article.nwsHt.nwsUpgrade p')->each(function ($node) {
                 return $node->html();

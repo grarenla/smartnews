@@ -91,19 +91,9 @@ class scrapeOldDantri extends Command
             }
         }
 
-        $duplicateRecords = DB::table('news')            
-            ->select('title')
-            ->selectRaw('count(`title`) as `occurences`')            
-            ->groupBy('title')
-            ->having('occurences', '>', 1)
-            ->get();
-        
-        foreach($duplicateRecords as $record) {
-            $dontDeleteThisRow  = News::where('title', $record->title)->first();
-            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
-        }
-        
-
+        //delete duplicate
+        News::deletedNewsDuplicate();
+        //count total records
         echo "\n" . "Total: " . $countnews . " records" . "\n";
     }
 
@@ -160,7 +150,7 @@ class scrapeOldDantri extends Command
             if (isset($img[0])) {
                 $img = $img[0];
             } else {
-                $img = '';
+                $img = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
             }
 
             $content = $crawler->filter('.detail-content')->each(function ($node) {
