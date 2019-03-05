@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 //API news
-Route::get('/news', 'NewsController@index'); //get list news
+// Route::get('/news', 'NewsController@index'); //get list news
 Route::post('/news', 'NewsController@store'); // create a record news
 Route::get('/news/{id}', 'NewsController@show'); // get news by Id
 Route::put('/news/{id}', 'NewsController@update'); // edit news
@@ -29,7 +29,7 @@ Route::get('/category/news/{id}', 'NewsController@listByCategory'); //get list n
 Route::get('/category', 'CategoryController@index'); // list category
 
 
-//Route::middleware('cors')->get('/news', 'NewsController@index');
+Route::middleware('cors')->get('/news', 'NewsController@index');
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
 //Route::middleware('cors')->get('/category/news/{id}', 'NewsController@listByCategory');
 //Route::middleware('cors')->post('/news/insert', 'NewsController@store');
