@@ -28,7 +28,13 @@ Route::get('/category/news/{id}', 'NewsController@listByCategory'); //get list n
 //API category
 Route::get('/category', 'CategoryController@index'); // list category
 
+// Auth
+Route::post('register', 'ApiAuthController@register'); // register
+Route::post('login', 'ApiAuthController@login'); // login(return token)
 
+Route::group(['middleware' => 'jwt.auth'], function () {
+    Route::get('auth', 'ApiAuthController@user'); // get info user
+});
 //Route::middleware('cors')->get('/news', 'NewsController@index');
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
 //Route::middleware('cors')->get('/category/news/{id}', 'NewsController@listByCategory');
