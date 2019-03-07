@@ -65,8 +65,10 @@ class scrapeKenh14 extends Command
     public function handle()
     {
 
-        $countnews = 0;
+        $countNews = 1;
+
         $category = $this->categories;
+
         for ($i = 0; $i < count($category); $i++) {
             $crawler = Goutte::request('GET', 'http://kenh14.vn/' . $category[$i]);
             $linkPost = $crawler->filter('h3.knswli-title a')->each(function ($node) {
@@ -87,14 +89,16 @@ class scrapeKenh14 extends Command
 
             foreach ($linkPost as $link) {
                 self::scrapePost($link, $i + 1);
-                echo "Posted Kenh14 " . $countnews++ . "\n";
+                echo "\n"."Posted Kenh14 " . $countNews++ ;
             }
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
-        //delete duplicate
-        News::deletedNewsDuplicate();
         //count total records
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+        $totalRecords = $countNews -1;
+        echo "\n" . "Total obtained: " .$totalRecords . " records" . "\n";
     }
 
 
@@ -168,6 +172,7 @@ class scrapeKenh14 extends Command
             News::installNews($data);
 
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 

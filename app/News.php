@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class News extends Model
 {
@@ -122,10 +123,10 @@ class News extends Model
     }
 
 
-    public static function deletedNewsDuplicate(){
 
-        echo "Waiting to delete Duplicate news...";
+    public static  function deletedNewsDuplicate($output){
 
+        $countNumDelete = 0;
         $duplicateRecords = DB::table('news')
             ->select('title')
             ->selectRaw('count(`title`) as `occurrences`')
@@ -133,12 +134,31 @@ class News extends Model
             ->having('occurrences', '>', 1)
             ->get();
 
+        $progressBar = new ProgressBar($output, 100);
+        $progressBar->start();
         foreach($duplicateRecords as $record) {
             $dontDeleteThisRow  = News::where('title', $record->title)->first();
             DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
+            $progressBar->advance(100/count($duplicateRecords));
+            $countNumDelete++;
         }
-        echo "\n"."Done !!!";
+
+        $progressBar->finish();
+        if($countNumDelete > 0){
+            echo "\n"."Waiting to delete Duplicate news..."."\n";
+            echo "\n" ."Success delete ".$countNumDelete." record duplicate";
+            echo "\n"."Done !!!";
+        }
+
 //        DB::table('news')->
 //        ALTER TABLE tmp AUTO_INCREMENT = 3;
+    }
+
+    public static  function deletedNewsNoImg(){
+        DB::table('news')
+            ->where('img',' ')
+            ->orwhere('title',' ')
+            ->orWhere('content',' ')
+            ->delete();
     }
 }

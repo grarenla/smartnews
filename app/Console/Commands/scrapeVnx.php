@@ -24,7 +24,9 @@ class scrapeVnx extends Command
      */
     protected $signature = 'scrape:vnx';
     public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    public $imgUri = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     protected $output;
+    protected $numPage = 5;
 
 
     /**
@@ -48,22 +50,33 @@ class scrapeVnx extends Command
         'thoi-su',
 
     ];
-    public $pagearr = [
-        '-p1',
-        '-p2',
-        // '-p3',
-        // '-p4',
-        '/p1',
-        '/p2',
-    ];
+    public $pageArr = array();
+//    [
+//        '-p1',
+//         '-p2',
+//         '-p3',
+//         '-p4',
+//        '/p1',
+//        '/p2',
+//    ];
 
-//    public function page($numPage)
-//    {
-//        for ($i = 1; $i < $numPage; $i++) {
-//            return array_push($this->pagearr, "-p" . $i);
-//        }
-//
-//    }
+
+    public function page($numPage, $category)
+    {
+        unset($this->pageArr);
+        $this->pageArr = array();
+        if ($category == 1 || $category == 6 || $category == 8 || $category == 9 || $category == 10) {
+            for ($i = 1; $i <= $numPage; $i++) {
+                return array_push($this->pageArr, "-p" . $i);
+            }
+        } else {
+            for ($i = 1; $i <= $numPage; $i++) {
+                return array_push($this->pageArr, "/p" . $i);
+            }
+        }
+
+
+    }
 
 
     /**
@@ -82,17 +95,24 @@ class scrapeVnx extends Command
 
     public function handle()
     {
-        $countnews = 0;
+        $countNews = 1;
         $category = $this->categories;
+
         for ($i = 0; $i < count($category); $i++) {
-            foreach ($this->pagearr as $pageNumber) {
+
+            $this->page($this->numPage, $i + 1);
+
+            foreach ($this->pageArr as $pageNumber) {
                 $crawler = Goutte::request('GET', 'https://vnexpress.net/' . $category[$i] . $pageNumber);
                 $linkPost = $crawler->filter('section.sidebar_1 h4.title_news a.icon_commend')->each(function ($node) {
+                    if ($node->attr('href') == null) {
+                        return $node->attr('data-href');
+                    }
                     return $node->attr('href');
                 });
 
                 // waiting 10s
-               echo "\n"."Waiting.... to next ".$category[$i].$pageNumber . "\n";
+                echo "\n" . "Waiting.... to next " . $category[$i] . $pageNumber . "\n";
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();
                 $u = 0;
@@ -105,15 +125,17 @@ class scrapeVnx extends Command
 
                 foreach ($linkPost as $link) {
                     self::scrapePost($link, $i + 1);
-                    echo "\n"."Posted Vnx " . $countnews++;
+                    echo "\n" . "Posted Vnx " . $countNews++;
                 }
             }
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
-        //delete duplicate
-        News::deletedNewsDuplicate();
         //count total records
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+        $totalRecords = $countNews - 1;
+        echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
     }
 
 
@@ -124,7 +146,9 @@ class scrapeVnx extends Command
      */
     public function scrapePost($url, $idCategory)
     {
+
         try {
+
 
             $crawler = Goutte::request('GET', $url);
 
@@ -176,14 +200,20 @@ class scrapeVnx extends Command
             });
             if (isset($img[0])) {
                 $img = $img[0];
+                if ($img == $this->imgUri) {
+                    $img = '';
+                }
             } else {
                 $img = $crawler->filter('.block_thumb_slide_show img')->each(function ($node) {
                     return $node->attr('src');
                 });
                 if (isset($img[0])) {
                     $img = $img[0];
+                    if ($img == $this->imgUri) {
+                        $img = '';
+                    }
                 } else {
-                    $img = $this->imgDefault;
+                    $img = ' ';
                 }
             }
             // .content_detail.fck_detail.width_common
@@ -228,6 +258,7 @@ class scrapeVnx extends Command
             News::installNews($data);
 
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 

@@ -19,6 +19,7 @@ class scrapeDantri extends Command
     protected $signature = 'scrape:Dantri';
     public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
     protected $output;
+    protected $numPage = 5;
 
     /**
      * The console command description.
@@ -32,8 +33,9 @@ class scrapeDantri extends Command
         'kinh-doanh',
         'the-thao',
         'suc-khoe',
-        'DOI SONG',
+        'nhip-song-tre',
         'suc-manh-so',
+        'DU LICH',
         'phap-luat',
 
 
@@ -42,7 +44,7 @@ class scrapeDantri extends Command
 
     public function page($numPage)
     {
-        for ($i = 2; $i < $numPage + 2; $i++) {
+        for ($i = 1; $i <= $numPage; $i++) {
             array_push($this->pagearr, "trang-" . $i);
         }
 
@@ -64,10 +66,11 @@ class scrapeDantri extends Command
      */
     public function handle()
     {
-        $this->page(1);
-        $countnews = 0;
 
 
+        $countNews = 1;
+
+        $this->page($this->numPage);
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
             foreach ($this->pagearr as $pageNumber) {
@@ -77,8 +80,8 @@ class scrapeDantri extends Command
                     return $node->attr('href');
                 });
 
-// waiting 10s
-                echo "\n"."Waiting.... to next ".$category[$i].$pageNumber . "\n";
+                    // waiting 10s
+                echo "\n" . "Waiting.... to next " . $category[$i] . $pageNumber . "\n";
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();
                 $u = 0;
@@ -90,16 +93,20 @@ class scrapeDantri extends Command
 
                 foreach ($linkPost as $link) {
                     self::scrapePost('https://dantri.com.vn' . $link, $i + 1);
-                    echo "Posted Dantri " . $countnews++ . "\n";
+                    echo "\n"."Posted Dantri " . $countNews++ ;
                 }
             }
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
-        // self::scrapePost('https://dantri.com.vn/the-gioi/ong-trump-bac-tin-huy-tap-tran-quan-su-de-nhuong-bo-ong-kim-jongun-20190305070307721.htm', 1);
-        //delete duplicate
-        News::deletedNewsDuplicate();
-        //  count total records
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+
+
+
+        //count total records
+        $totalRecords = $countNews - 1;
+        echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
     }
 
 
@@ -152,7 +159,7 @@ class scrapeDantri extends Command
                 $img = $img[0];
             } else {
 
-                $img = $this->imgDefault;
+                $img = '';
             }
 
             $content = $crawler->filter('#divNewsContent')->each(function ($node) {
@@ -190,6 +197,7 @@ class scrapeDantri extends Command
             News::installNews($data);
 
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 

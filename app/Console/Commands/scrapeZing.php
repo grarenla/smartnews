@@ -17,7 +17,7 @@ class scrapeZing extends Command
      * @var string
      */
     protected $signature = 'scrape:zing';
-    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
     protected $output;
 
     /**
@@ -33,10 +33,8 @@ class scrapeZing extends Command
         'kinh-doanh-tai-chinh.html',
         'the-thao.html',
         'suc-khoe.html',
-        '',
-        'doi-song',
-        '',
-        'khoa-hoc',
+        'nhip-song.html',
+        'cong-nghe.html',
         'du-lich.html',
         'phap-luat.html',
 
@@ -60,7 +58,7 @@ class scrapeZing extends Command
      */
     public function handle()
     {
-        $countnews = 0;
+        $countNews = 1;
 
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
@@ -71,7 +69,7 @@ class scrapeZing extends Command
             });
 
             // waiting 10s
-            echo "\n"."Waiting.... to next ".$category[$i] . "\n";
+            echo "\n" . "Waiting.... to next " . $category[$i] . "\n";
             $progressBar = new ProgressBar($this->output, 100);
             $progressBar->start();
             $u = 0;
@@ -82,19 +80,20 @@ class scrapeZing extends Command
             $progressBar->finish();
 
 
-                foreach ($linkPost as $link) {
+            foreach ($linkPost as $link) {
                 self::scrapePost($link, $i + 1);
-                echo "Posted Zing " . $countnews++ . "\n";
+                echo "\n"."Posted Zing " . $countNews++ ;
             }
 
-
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
 
-        //delete duplicate
-        News::deletedNewsDuplicate();
         //count total records
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+        $totalRecords = $countNews -1;
+        echo "\n" . "Total obtained: " .$totalRecords . " records" . "\n";
     }
 
 
@@ -140,9 +139,9 @@ class scrapeZing extends Command
             //cắt chuỗi để tách 2 thẻ article ra
 
             //Lấy ra chuỗi muốn tách
-            $getString = strstr($content,'<table align=');
+            $getString = strstr($content, '<table align=');
             //thay thế chuỗi muốn tách bằng chuỗi rỗng
-            $content = str_replace($getString,'',$content) ;
+            $content = str_replace($getString, '', $content);
 
 
             $img = $crawler->filter('section.main img')->each(function ($node) {
@@ -151,7 +150,7 @@ class scrapeZing extends Command
             if (isset($img[0])) {
                 $img = $img[0];
             } else {
-                $img = $this ->imgDefault;
+                $img = '';
             }
 
 //        $author = $crawler->filter('li.the-article-author a')->each(function ($node) {
@@ -169,12 +168,11 @@ class scrapeZing extends Command
                 'category_id' => $idCategory
             ];
 
-           News::installNews($data);
-
-
+            News::installNews($data);
 
 
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 
