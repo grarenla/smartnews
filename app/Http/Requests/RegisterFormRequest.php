@@ -21,7 +21,7 @@ class RegisterFormRequest extends FormRequest
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
-            'passwordConfirm' => 'required|same:password'
+//            'passwordConfirm' => 'required|same:password'
         ];
     }
 
@@ -37,8 +37,8 @@ class RegisterFormRequest extends FormRequest
             'password.required' => 'Password is required',
             'password.string' => 'Password is not string.',
             'password.min' => 'Password must be greater than 6 characters.',
-            'passwordConfirm.required' => 'Password confirm is required',
-            'passwordConfirm.same' => 'Password confirm must be the same as password.'
+//            'passwordConfirm.required' => 'Password confirm is required',
+//            'passwordConfirm.same' => 'Password confirm must be the same as password.'
         ];
     }
 
