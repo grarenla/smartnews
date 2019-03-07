@@ -32,10 +32,12 @@ Route::get('/category', 'CategoryController@index'); // list category
 Route::post('register', 'ApiAuthController@register'); // register
 Route::post('login', 'ApiAuthController@login'); // login(return token)
 
+
 Route::group(['middleware' => 'jwt.auth'], function () {
     Route::get('auth', 'ApiAuthController@user'); // get info user
 });
 //Route::middleware('cors')->get('/news', 'NewsController@index');
+
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
 //Route::middleware('cors')->get('/category/news/{id}', 'NewsController@listByCategory');
 //Route::middleware('cors')->post('/news/insert', 'NewsController@store');

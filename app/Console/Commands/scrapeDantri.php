@@ -7,6 +7,7 @@ use App\News;
 use Illuminate\Console\Command;
 use Goutte;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeDantri extends Command
 {
@@ -15,7 +16,10 @@ class scrapeDantri extends Command
      *
      * @var string
      */
-    protected $signature = 'scrape:dantri';
+    protected $signature = 'scrape:Dantri';
+    public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
+    protected $numPage = 5;
 
     /**
      * The console command description.
@@ -25,34 +29,26 @@ class scrapeDantri extends Command
     protected $description = 'Command description';
 
     public $categories = [
-
-        'su-kien',        
-        'xa-hoi',
         'the-gioi',
-        'the-thao',
-        'giao-duc-khuyen-hoc',
-        'tam-long-nhan-ai',
         'kinh-doanh',
-        'bat-dong-san',
-        'van-hoa',
-        'giai-tri',
-        'phap-luat',
-        'nhip-song-tre',
+        'the-thao',
         'suc-khoe',
+        'nhip-song-tre',
         'suc-manh-so',
-        'o-to-xe-may',
-        'tinh-yeu-gioi-tinh',
+        'DU LICH',
+        'phap-luat',
+
 
     ];
-    
+    public $pagearr = [];
 
-//    public function page($numPage)
-//    {
-//        for ($i = 1; $i < $numPage; $i++) {
-//            return array_push($this->pagearr, "-p" . $i);
-//        }
-//
-//    }
+    public function page($numPage)
+    {
+        for ($i = 1; $i <= $numPage; $i++) {
+            array_push($this->pagearr, "trang-" . $i);
+        }
+
+    }
 
 
     /**
@@ -70,39 +66,47 @@ class scrapeDantri extends Command
      */
     public function handle()
     {
-        $countnews = 1;
 
 
+        $countNews = 1;
+
+        $this->page($this->numPage);
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
-            
-            $crawler = Goutte::request('GET', 'https://dantri.com.vn/' . $category[$i].'.htm');
-            $linkPost = $crawler->filter('a.fon6')->each(function ($node) {
+            foreach ($this->pagearr as $pageNumber) {
+                $crawler = Goutte::request('GET', 'https://dantri.com.vn/' . $category[$i] . "/" . $pageNumber . '.htm');
+                $linkPost = $crawler->filter('a.fon6')->each(function ($node) {
 
-                return $node->attr('href');
-            });
+                    return $node->attr('href');
+                });
 
-            foreach ($linkPost as $link) {
-                self::scrapePost('https://dantri.com.vn'.$link, $i + 1);
-                echo "Posted Dantri " . $countnews++ . "\n";
+                    // waiting 10s
+                echo "\n" . "Waiting.... to next " . $category[$i] . $pageNumber . "\n";
+                $progressBar = new ProgressBar($this->output, 100);
+                $progressBar->start();
+                $u = 0;
+                while ($u++ < 10) {
+                    sleep(1);
+                    $progressBar->advance(10);
                 }
-            
+                $progressBar->finish();
+
+                foreach ($linkPost as $link) {
+                    self::scrapePost('https://dantri.com.vn' . $link, $i + 1);
+                    echo "\n"."Posted Dantri " . $countNews++ ;
+                }
+            }
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
-        $duplicateRecords = DB::table('news')            
-            ->select('title')
-            ->selectRaw('count(`title`) as `occurences`')            
-            ->groupBy('title')
-            ->having('occurences', '>', 1)
-            ->get();
-        
-        foreach($duplicateRecords as $record) {
-            $dontDeleteThisRow  = News::where('title', $record->title)->first();
-            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
-        }
-        // print_r($duplicateRecords);
 
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+
+
+        //count total records
+        $totalRecords = $countNews - 1;
+        echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
     }
 
 
@@ -111,7 +115,7 @@ class scrapeDantri extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory)
     {
         try {
 
@@ -119,38 +123,34 @@ class scrapeDantri extends Command
 
             $title = $crawler->filter('h1.fon31.mgb15')->each(function ($node) {
                 return $node->text();
-            })[0];
-            // if (isset($title[0])) {
-            //     $title = $title[0];
-            // } else {
-            //     $title = $crawler->filter('h1.title_news_detail')->each(function ($node) {
-            //         return $node->text();
-            //     });
-            //     if (isset($title[0])) {
-            //         $title = $title[0];
-            //     } else {
-            //         $title = '';
-            //     }
-            // }
+            });
+            if (isset($title[0])) {
+                $title = $title[0];
+            } else {
 
-            
+                $title = '';
+            }
+
+            $title = trim($title, ' ');
+
 
             $description = $crawler->filter('h2.fon33.mt1.sapo')->each(function ($node) {
-                return $node->text();
-            })[0];
-            // if (isset($description[0])) {
-            //     $description = $description[0];
-            // } else {
-            //     $description = $crawler->filter('section.sidebar_1 p.description')->each(function ($node) {
-            //         return $node->text();
-            //     });
-            //     if (isset($description[0])) {
-            //         $description = $description[0];
-            //     } else {
-            //         $description = '';
-            //     }
-            // }
-//        $description = str_replace('', '', $description);
+                return $node->html();
+            });
+            if (isset($description[0])) {
+                $description = $description[0];
+            } else {
+                $description = '';
+            }
+            //cắt chuỗi để tách 2 thẻ article ra
+
+            //Lấy ra chuỗi muốn tách
+            $getString = strstr($description, '<br');
+            //thay thế chuỗi muốn tách bằng chuỗi rỗng
+            $description = str_replace($getString, '', $description);
+            //Lắt chữ dân trí ở đầu
+            $description = str_replace('<span>Dân trí</span>', '', $description);
+
 
             $img = $crawler->filter('.detail-content figure img')->each(function ($node) {
                 return $node->attr('src');
@@ -158,10 +158,11 @@ class scrapeDantri extends Command
             if (isset($img[0])) {
                 $img = $img[0];
             } else {
+
                 $img = '';
             }
 
-            $content = $crawler->filter('.detail-content')->each(function ($node) {
+            $content = $crawler->filter('#divNewsContent')->each(function ($node) {
                 return $node->html();
             });
 
@@ -171,6 +172,10 @@ class scrapeDantri extends Command
             } else {
                 $content = '';
             }
+            //Lấy ra chuỗi muốn tách
+            $getString = strstr($content, '<div');
+            //thay thế chuỗi muốn tách bằng chuỗi rỗng
+            $content = str_replace($getString, '', $content);
 
 
 //        $author = $crawler->filter('li.the-article-author a')->each(function ($node) {
@@ -188,10 +193,11 @@ class scrapeDantri extends Command
                 'category_id' => $idCategory
             ];
 
-
+            //   echo $description;
             News::installNews($data);
 
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 

@@ -6,7 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
-use Mpociot\Firebase\SyncsWithFirebase;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class News extends Model
 {
@@ -15,6 +16,9 @@ class News extends Model
     protected $table = 'news';
     protected $dates = ['deleted_at'];
 
+    /**
+     * @return string
+     */
     public static function list()
     {
         try {
@@ -26,6 +30,10 @@ class News extends Model
     }
 
 
+    /**
+     * @param $newsJson
+     * @return News|string
+     */
     public static function installNews($newsJson)
     {
         try {
@@ -47,6 +55,11 @@ class News extends Model
 
     }
 
+    /**
+     * @param $newsJson
+     * @param $news
+     * @return string
+     */
     public static function updateNews($newsJson, $news)
     {
         try {
@@ -66,6 +79,10 @@ class News extends Model
 
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getById($id)
     {
         try {
@@ -76,6 +93,10 @@ class News extends Model
         }
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getByCategoryId($id)
     {
         try {
@@ -89,6 +110,7 @@ class News extends Model
 
     /**
      * @param $new
+     * @return string
      */
     public static function deleteNews($new)
     {
@@ -98,5 +120,45 @@ class News extends Model
             return $e->getMessage();
         }
 
+    }
+
+
+
+    public static  function deletedNewsDuplicate($output){
+
+        $countNumDelete = 0;
+        $duplicateRecords = DB::table('news')
+            ->select('title')
+            ->selectRaw('count(`title`) as `occurrences`')
+            ->groupBy('title')
+            ->having('occurrences', '>', 1)
+            ->get();
+
+        $progressBar = new ProgressBar($output, 100);
+        $progressBar->start();
+        foreach($duplicateRecords as $record) {
+            $dontDeleteThisRow  = News::where('title', $record->title)->first();
+            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
+            $progressBar->advance(100/count($duplicateRecords));
+            $countNumDelete++;
+        }
+
+        $progressBar->finish();
+        if($countNumDelete > 0){
+            echo "\n"."Waiting to delete Duplicate news..."."\n";
+            echo "\n" ."Success delete ".$countNumDelete." record duplicate";
+            echo "\n"."Done !!!";
+        }
+
+//        DB::table('news')->
+//        ALTER TABLE tmp AUTO_INCREMENT = 3;
+    }
+
+    public static  function deletedNewsNoImg(){
+        DB::table('news')
+            ->where('img',' ')
+            ->orwhere('title',' ')
+            ->orWhere('content',' ')
+            ->delete();
     }
 }

@@ -17,12 +17,19 @@ class NewsController extends Controller
 
     public function index()
     {
-        $list = News::list();
+                $list = News::list();
         if ($list !== null) {
             return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
         } else {
             return response()->json(['data' => $list], 404);
         }
+
+//        $list = News::list();
+//        if ($list !== null) {
+//            return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
+//        } else {
+//            return response()->json(['data' => $list], 404);
+//        }
     }
 
     public function listByCategory($id)
