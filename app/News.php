@@ -45,6 +45,7 @@ class News extends Model
             $news->source = $newsJson['source'];
             $news->author = $newsJson['author'];
             $news->category_id = $newsJson['category_id'];
+            $news->user_id = $newsJson['user_id'];
             $news->created_at = Carbon::now();
             $news->updated_at = Carbon::now();
             $news->save();
@@ -159,6 +160,9 @@ class News extends Model
             ->where('img',' ')
             ->orwhere('title',' ')
             ->orWhere('content',' ')
+            ->orWhere('content','
+                            ')
             ->delete();
     }
 }
+//insert into categories (name) values ('Thế giới'); insert into categories (name) values ('Kinh doanh'); insert into categories (name) values ('Thể thao'); insert into categories (name) values ('Sức khoẻ'); insert into categories (name) values ('Đời sống'); insert into categories (name) values ('Khoa học'); insert into categories (name) values ('Du lịch'); insert into categories (name) values ('Pháp luật'); insert into categories (name) values ('Tâm sự'); insert into categories (name) values ('Thời sự');

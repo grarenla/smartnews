@@ -164,6 +164,7 @@ class scrapeKenh14 extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => 'http://kenh14.vn/' . $url,
+                'user_id' => 1,
                 'author' => '',
                 'category_id' => $idCategory
             ];

@@ -164,6 +164,7 @@ class scrapeZing extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => 'https://news.zing.vn' . $url,
+                'user_id' => 1,
                 'author' => '',
                 'category_id' => $idCategory
             ];
