@@ -118,6 +118,7 @@ $("#btn-submit").click(function () {
             "source": forms['source'].value,
             "author": forms['author'].value,
             "category_id": forms['category'].value,
+            "user_id": forms['user_id'].value,
             "img": images[images.length - 1]
         };
         console.log(productData);
