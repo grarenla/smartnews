@@ -189,6 +189,7 @@ class scrapeDantri extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => $url,
+                'user_id' => 1,
                 'author' => '',
                 'category_id' => $idCategory
             ];

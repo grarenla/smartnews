@@ -9,7 +9,6 @@
 namespace App\Console\Commands;
 
 
-use App\Http\Controllers\NewsController;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
@@ -67,11 +66,11 @@ class scrapeVnx extends Command
         $this->pageArr = array();
         if ($category == 1 || $category == 6 || $category == 8 || $category == 9 || $category == 10) {
             for ($i = 1; $i <= $numPage; $i++) {
-                return array_push($this->pageArr, "-p" . $i);
+                 array_push($this->pageArr, "-p" . $i);
             }
         } else {
             for ($i = 1; $i <= $numPage; $i++) {
-                return array_push($this->pageArr, "/p" . $i);
+                 array_push($this->pageArr, "/p" . $i);
             }
         }
 
@@ -116,9 +115,9 @@ class scrapeVnx extends Command
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();
                 $u = 0;
-                while ($u++ < 10) {
+                while ($u++ < 30) {
                     sleep(1);
-                    $progressBar->advance(10);
+                    $progressBar->advance(100/30);
                 }
                 $progressBar->finish();
 
@@ -250,6 +249,7 @@ class scrapeVnx extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => $url,
+                'user_id' => 1,
                 'author' => '',
                 'category_id' => $idCategory
             ];
