@@ -25,7 +25,7 @@ class scrapeVnx extends Command
     public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
     public $imgUri = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     protected $output;
-    protected $numPage = 3;
+    protected $numPage = 5;
 
 
     /**
