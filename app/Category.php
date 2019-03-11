@@ -23,4 +23,12 @@ class Category extends Model
             return null;
         }
     }
+    public static function getUrlById($url){
+        try{
+            $category = Category::where('category_url', $url)->get();
+            return $category[0];
+        }catch (Exception $e) {
+            return null;
+        }
+    }
 }

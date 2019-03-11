@@ -20,10 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //API news
 Route::get('/news', 'NewsController@index'); //get list news
 Route::post('/news', 'NewsController@store'); // create a record news
-Route::get('/news/{id}', 'NewsController@show'); // get news by Id
+//Route::get('/news/{id}', 'NewsController@showId'); // get news by Id
+Route::get('/news/{url}', 'NewsController@showUrl'); // get news by Url
 Route::put('/news/{id}', 'NewsController@update'); // edit news
 Route::delete('/news/{id}', 'NewsController@destroy'); // delete news
-Route::get('/category/news/{id}', 'NewsController@listByCategory'); //get list news by category_id
+//Route::get('/category/news/{id}', 'NewsController@listByCategoryId'); //get list news by category_id
+Route::get('/category/news/{url}', 'NewsController@listByCategoryUrl'); //get list news by category_id
 
 //API category
 Route::get('/category', 'CategoryController@index'); // list category
