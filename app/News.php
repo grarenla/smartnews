@@ -99,7 +99,7 @@ class News extends Model
     public static function getByUrlTitle($urlTitle)
     {
         try {
-            $news = News::where('url',$urlTitle)->get();
+            $news = News::join('categories','news.category_id','=','categories.id')->where('url',$urlTitle)->get();
             return $news;
         } catch (Exception $e) {
             return $e->getMessage();
