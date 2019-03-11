@@ -121,8 +121,6 @@ class scrapeKenh14 extends Command
                 $title = '';
             }
 
-            // $slug = str_slug($title);
-
             $description = $crawler->filter('h2.knc-sapo')->each(function ($node) {
                 return $node->text();
             });
@@ -164,7 +162,8 @@ class scrapeKenh14 extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => 'http://kenh14.vn/' . $url,
-                'user_id' => 1,
+                'user_id' => 2,
+                'url' => $title,
                 'author' => '',
                 'category_id' => $idCategory
             ];

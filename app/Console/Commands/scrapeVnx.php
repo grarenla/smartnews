@@ -135,6 +135,7 @@ class scrapeVnx extends Command
         //count total records
         $totalRecords = $countNews - 1;
         echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
+      //  $this->scrapePost('https://vnexpress.net/the-gioi/con-trai-ong-ho-cam-dao-co-the-sap-tro-thanh-bi-thu-tay-an-3892607.html', 1);
     }
 
 
@@ -167,7 +168,6 @@ class scrapeVnx extends Command
                 }
             }
 
-            // $slug = str_slug($title);
             //.description
 
             $description = $crawler->filter('h2.short_intro.txt_666')->each(function ($node) {
@@ -249,13 +249,15 @@ class scrapeVnx extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => $url,
-                'user_id' => 1,
+                'user_id' => 2,
                 'author' => '',
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 
 
             News::installNews($data);
+
 
         } catch (\Exception $exception) {
             News::deletedNewsDuplicate($this->output);

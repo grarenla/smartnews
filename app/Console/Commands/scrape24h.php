@@ -146,8 +146,6 @@ class scrape24H extends Command
                 }
             }
 
-            // $slug = str_slug($title);
-            //h2.ctTp
             $description = $crawler->filter('h2.ctTp')->each(function ($node) {
                 return $node->text();
             });
@@ -208,8 +206,9 @@ class scrape24H extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => $url,
-                'user_id' => 1,
+                'user_id' => 2,
                 'author' => '',
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 

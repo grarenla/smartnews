@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
@@ -46,6 +47,7 @@ class News extends Model
             $news->author = $newsJson['author'];
             $news->category_id = $newsJson['category_id'];
             $news->user_id = $newsJson['user_id'];
+            $news->url = str_slug($newsJson['title']).'-'.round(microtime(true) * 1000); //(new \DateTime)->getTimestamp();  //Băm title để làm friendly url
             $news->created_at = Carbon::now();
             $news->updated_at = Carbon::now();
             $news->save();
@@ -94,6 +96,16 @@ class News extends Model
         }
     }
 
+    public static function getByUrlTitle($urlTitle)
+    {
+        try {
+            $news = News::where('url',$urlTitle)->get();
+            return $news;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     /**
      * @param $id
      * @return string
@@ -109,6 +121,21 @@ class News extends Model
 
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
+    public static function getByCategoryUrl($url)
+    {
+        try {
+            $category = Category::getUrlById($url);
+            $list = News::where('category_id', $category->id)->paginate(10);
+            return $list;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+
+    }
     /**
      * @param $new
      * @return string
@@ -134,7 +161,7 @@ class News extends Model
             ->groupBy('title')
             ->having('occurrences', '>', 1)
             ->get();
-
+        echo "\n"."Waiting to delete Duplicate news..."."\n";
         $progressBar = new ProgressBar($output, 100);
         $progressBar->start();
         foreach($duplicateRecords as $record) {
@@ -146,9 +173,11 @@ class News extends Model
 
         $progressBar->finish();
         if($countNumDelete > 0){
-            echo "\n"."Waiting to delete Duplicate news..."."\n";
+
             echo "\n" ."Success delete ".$countNumDelete." record duplicate";
             echo "\n"."Done !!!";
+        }else{
+            echo "\n"."No record duplicate";
         }
 
 //        DB::table('news')->

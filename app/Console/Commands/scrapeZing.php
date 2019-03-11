@@ -116,7 +116,6 @@ class scrapeZing extends Command
                 $title = '';
             }
 
-            // $slug = str_slug($title);
 
             $description = $crawler->filter('p.the-article-summary')->each(function ($node) {
                 return $node->text();
@@ -164,8 +163,9 @@ class scrapeZing extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => 'https://news.zing.vn' . $url,
-                'user_id' => 1,
+                'user_id' => 2,
                 'author' => '',
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 
