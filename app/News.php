@@ -3,10 +3,12 @@
 namespace App;
 
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
-use Mpociot\Firebase\SyncsWithFirebase;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class News extends Model
 {
@@ -15,6 +17,9 @@ class News extends Model
     protected $table = 'news';
     protected $dates = ['deleted_at'];
 
+    /**
+     * @return string
+     */
     public static function list()
     {
         try {
@@ -26,6 +31,10 @@ class News extends Model
     }
 
 
+    /**
+     * @param $newsJson
+     * @return News|string
+     */
     public static function installNews($newsJson)
     {
         try {
@@ -37,6 +46,8 @@ class News extends Model
             $news->source = $newsJson['source'];
             $news->author = $newsJson['author'];
             $news->category_id = $newsJson['category_id'];
+            $news->user_id = $newsJson['user_id'];
+            $news->url = str_slug($newsJson['title']).'-'.round(microtime(true) * 1000); //(new \DateTime)->getTimestamp();  //Băm title để làm friendly url
             $news->created_at = Carbon::now();
             $news->updated_at = Carbon::now();
             $news->save();
@@ -47,6 +58,11 @@ class News extends Model
 
     }
 
+    /**
+     * @param $newsJson
+     * @param $news
+     * @return string
+     */
     public static function updateNews($newsJson, $news)
     {
         try {
@@ -66,6 +82,10 @@ class News extends Model
 
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getById($id)
     {
         try {
@@ -76,6 +96,20 @@ class News extends Model
         }
     }
 
+    public static function getByUrlTitle($urlTitle)
+    {
+        try {
+            $news = News::join('categories','news.category_id','=','categories.id')->where('url',$urlTitle)->get();
+            return $news;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getByCategoryId($id)
     {
         try {
@@ -88,7 +122,23 @@ class News extends Model
     }
 
     /**
+     * @param $id
+     * @return string
+     */
+    public static function getByCategoryUrl($url)
+    {
+        try {
+            $category = Category::getUrlById($url);
+            $list = News::where('category_id', $category->id)->paginate(10);
+            return $list;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+
+    }
+    /**
      * @param $new
+     * @return string
      */
     public static function deleteNews($new)
     {
@@ -99,4 +149,49 @@ class News extends Model
         }
 
     }
+
+
+
+    public static  function deletedNewsDuplicate($output){
+
+        $countNumDelete = 0;
+        $duplicateRecords = DB::table('news')
+            ->select('title')
+            ->selectRaw('count(`title`) as `occurrences`')
+            ->groupBy('title')
+            ->having('occurrences', '>', 1)
+            ->get();
+        echo "\n"."Waiting to delete Duplicate news..."."\n";
+        $progressBar = new ProgressBar($output, 100);
+        $progressBar->start();
+        foreach($duplicateRecords as $record) {
+            $dontDeleteThisRow  = News::where('title', $record->title)->first();
+            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
+            $progressBar->advance(100/count($duplicateRecords));
+            $countNumDelete++;
+        }
+
+        $progressBar->finish();
+        if($countNumDelete > 0){
+
+            echo "\n" ."Success delete ".$countNumDelete." record duplicate";
+            echo "\n"."Done !!!";
+        }else{
+            echo "\n"."No record duplicate";
+        }
+
+//        DB::table('news')->
+//        ALTER TABLE tmp AUTO_INCREMENT = 3;
+    }
+
+    public static  function deletedNewsNoImg(){
+        DB::table('news')
+            ->where('img',' ')
+            ->orwhere('title',' ')
+            ->orWhere('content',' ')
+            ->orWhere('content','
+                            ')
+            ->delete();
+    }
 }
+//insert into categories (name) values ('Thế giới'); insert into categories (name) values ('Kinh doanh'); insert into categories (name) values ('Thể thao'); insert into categories (name) values ('Sức khoẻ'); insert into categories (name) values ('Đời sống'); insert into categories (name) values ('Khoa học'); insert into categories (name) values ('Du lịch'); insert into categories (name) values ('Pháp luật'); insert into categories (name) values ('Tâm sự'); insert into categories (name) values ('Thời sự');

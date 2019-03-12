@@ -12,6 +12,7 @@ namespace App\Console\Commands;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrape24H extends Command
 {
@@ -21,6 +22,9 @@ class scrape24H extends Command
      * @var string
      */
     protected $signature = 'scrape:24h';
+    public  $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
+    protected $numPage = 5;
 
     /**
      * The console command description.
@@ -30,30 +34,27 @@ class scrape24H extends Command
     protected $description = 'Command description';
 
     public $categories = [
-//        'thoi-su.html',
+
         'tin-tuc-quoc-te-c415.html',
         'kinh-doanh-c161.html',
         'the-thao-c101.html',
         'suc-khoe-doi-song-c62.html',
         'doi-song-showbiz-c729.html',
-        'khoa-hoc',
+        'cong-nghe-thong-tin-c55.html',
         'du-lich-24h-c76.html',
         'an-ninh-hinh-su-c51.html',
 
 
     ];
-    public $pagearr = [
-        '?vpage=1',
-        '?vpage=2',
-    ];
+    public $pagearr = [    ];
 
-//    public function page($numPage)
-//    {
-//        for ($i = 1; $i < $numPage; $i++) {
-//            return array_push($this->pagearr, "?vpage=" . $i);
-//        }
-//
-//    }
+    public function page($numPage)
+    {
+        for ($i = 1; $i < $numPage; $i++) {
+            return array_push($this->pagearr, "?vpage=" . $i);
+        }
+
+    }
 
 
     /**
@@ -73,10 +74,11 @@ class scrape24H extends Command
      */
     public function handle()
     {
-        $countnews = 1;
+        $countNews = 1;
 
 
         $category = $this->categories;
+        $this->page($this->numPage);
         for ($i = 0; $i < count($category); $i++) {
             foreach ($this->pagearr as $pageNumber) {
                 $crawler = Goutte::request('GET', 'https://www.24h.com.vn/' . $category[$i] . $pageNumber);
@@ -85,13 +87,33 @@ class scrape24H extends Command
                     return $node->attr('href');
                 });
 
+                // waiting 10s
+                echo "\n"."Waiting.... to next ".$category[$i].$pageNumber . "\n";
+                $progressBar = new ProgressBar($this->output, 100);
+                $progressBar->start();
+                $u = 0;
+                while ($u++ < 10) {
+                    sleep(1);
+                    $progressBar->advance(10);
+                }
+                $progressBar->finish();
+
+
                 foreach ($linkPost as $link) {
                     self::scrapePost($link, $i + 1);
-                    echo "Posted 24h " . $countnews++ . "\n";
+                    echo "\n"."Posted 24h " . $countNews++ ;
                 }
             }
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+
+        //count total records
+        $totalRecords = $countNews -1;
+        echo "\n" . "Total obtained: " .$totalRecords . " records" . "\n";
+
+
     }
 
 
@@ -100,21 +122,29 @@ class scrape24H extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public  function scrapePost($url, $idCategory)
     {
         try {
-            $crawler = Goutte::request('GET', $url);
-            $title = $crawler->filter('h1.clrTit')->each(function ($node) {
 
+            $crawler = Goutte::request('GET', $url);
+
+            //.atclTit.mrT10 a
+
+            $title = $crawler->filter('h1.clrTit')->each(function ($node) {
                 return $node->text();
             });
             if (isset($title[0])) {
                 $title = $title[0];
             } else {
-                $title = '';
+                $title = $crawler->filter('.atclTit.mrT10 a')->each(function ($node) {
+                    return $node->text();
+                });
+                if (isset($title[0])) {
+                    $title = $title[0];
+                } else {
+                    $title = '';
+                }
             }
-
-            // $slug = str_slug($title);
 
             $description = $crawler->filter('h2.ctTp')->each(function ($node) {
                 return $node->text();
@@ -125,14 +155,7 @@ class scrape24H extends Command
                 $description = '';
             }
 
-            $img = $crawler->filter('article.nwsHt.nwsUpgrade img')->each(function ($node) {
-                return $node->attr('src');
-            });
-            if (isset($img[0])) {
-                $img = $img[0];
-            } else {
-                $img = '';
-            }
+
 
             $content = $crawler->filter('article.nwsHt.nwsUpgrade p')->each(function ($node) {
                 return $node->html();
@@ -143,6 +166,32 @@ class scrape24H extends Command
                 $content = implode('<p>', array_slice($content, 0, -3));
             } else {
                 $content = '';
+            }
+
+            //article.bxDoiSbIt img
+            //img.news-image.initial.loading
+            $img = $crawler->filter('.nwsHt.nwsUpgrade img')->each(function ($node) {
+                return $node->attr('src');
+            });
+            if (isset($img[0])) {
+
+                if($img[0] == 'https://cdn.24h.com.vn/images/2014/icon-before-page.png'){
+                   if($img[1] == 'https://cdn.24h.com.vn/images/2014/icon-after-page.png')
+                    $img = $img[2];
+
+                }else{
+                    $img = $crawler->filter('.nwsHt.nwsUpgrade img')->each(function ($node) {
+                        return $node->attr('src');
+                    });
+                    if (isset($img[0])) {
+                        $img = $img[0];
+                    } else {
+                        $img = '';
+                    }
+                }
+                if($img == 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Flag_placeholder.svg/23px-Flag_placeholder.svg.png'){
+                    $img = '';
+                }
             }
 
 
@@ -157,14 +206,19 @@ class scrape24H extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => $url,
+                'user_id' => 2,
                 'author' => '',
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 
 
             News::installNews($data);
 
+
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
             return response()->json($exception->getMessage(), 500);
         }
 

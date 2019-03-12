@@ -38,6 +38,7 @@
                     </div>
                     <div class="body">
                         <form name="form_news">
+                            <input type="hidden" value="{{\Illuminate\Support\Facades\Auth::user()->id}}" name="user_id">
                             <div class="row clearfix">
                                 <div class="col-sm-12">
                                     <b>Title</b>

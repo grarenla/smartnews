@@ -7,6 +7,7 @@ use App\News;
 use Illuminate\Console\Command;
 use Goutte;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeZing extends Command
 {
@@ -16,6 +17,8 @@ class scrapeZing extends Command
      * @var string
      */
     protected $signature = 'scrape:zing';
+    public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    protected $output;
 
     /**
      * The console command description.
@@ -30,12 +33,8 @@ class scrapeZing extends Command
         'kinh-doanh-tai-chinh.html',
         'the-thao.html',
         'suc-khoe.html',
-
-        '',
-      //  'doi-song',
-        '',
-      //  'khoa-hoc',
-
+        'nhip-song.html',
+        'cong-nghe.html',
         'du-lich.html',
         'phap-luat.html',
 
@@ -59,7 +58,7 @@ class scrapeZing extends Command
      */
     public function handle()
     {
-        $countnews = 1;
+        $countNews = 1;
 
         $category = $this->categories;
         for ($i = 0; $i < count($category); $i++) {
@@ -69,26 +68,32 @@ class scrapeZing extends Command
                 return $node->attr('href');
             });
 
+            // waiting 10s
+            echo "\n" . "Waiting.... to next " . $category[$i] . "\n";
+            $progressBar = new ProgressBar($this->output, 100);
+            $progressBar->start();
+            $u = 0;
+            while ($u++ < 10) {
+                sleep(1);
+                $progressBar->advance(10);
+            }
+            $progressBar->finish();
 
-                foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1);
-                    echo "Posted Zing " . $countnews++ . "\n";
-                }
 
+            foreach ($linkPost as $link) {
+                self::scrapePost($link, $i + 1);
+                echo "\n"."Posted Zing " . $countNews++ ;
+            }
+
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
-        $duplicateRecords = DB::table('news')            
-            ->select('title')
-            ->selectRaw('count(`title`) as `occurences`')            
-            ->groupBy('title')
-            ->having('occurences', '>', 1)
-            ->get();
-        
-        foreach($duplicateRecords as $record) {
-            $dontDeleteThisRow  = News::where('title', $record->title)->first();
-            DB::table('news')->where('title', $record->title)->where('id', '!=', $dontDeleteThisRow->id)->delete();
-        }
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+
+        //count total records
+        $totalRecords = $countNews -1;
+        echo "\n" . "Total obtained: " .$totalRecords . " records" . "\n";
     }
 
 
@@ -97,7 +102,7 @@ class scrapeZing extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory)
     {
         try {
             $crawler = Goutte::request('GET', $url);
@@ -111,7 +116,6 @@ class scrapeZing extends Command
                 $title = '';
             }
 
-            // $slug = str_slug($title);
 
             $description = $crawler->filter('p.the-article-summary')->each(function ($node) {
                 return $node->text();
@@ -131,7 +135,14 @@ class scrapeZing extends Command
                 $content = '';
             }
 
-            //td.pic img
+            //cắt chuỗi để tách 2 thẻ article ra
+
+            //Lấy ra chuỗi muốn tách
+            $getString = strstr($content, '<table align=');
+            //thay thế chuỗi muốn tách bằng chuỗi rỗng
+            $content = str_replace($getString, '', $content);
+
+
             $img = $crawler->filter('section.main img')->each(function ($node) {
                 return $node->attr('src');
             });
@@ -152,13 +163,17 @@ class scrapeZing extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => 'https://news.zing.vn' . $url,
+                'user_id' => 2,
                 'author' => '',
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 
             News::installNews($data);
 
+
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 
