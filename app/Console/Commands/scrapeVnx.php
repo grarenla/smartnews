@@ -9,10 +9,10 @@
 namespace App\Console\Commands;
 
 
-use App\Http\Controllers\NewsController;
 use App\News;
 use Illuminate\Console\Command;
 use Goutte;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class scrapeVnx extends Command
 {
@@ -22,6 +22,11 @@ class scrapeVnx extends Command
      * @var string
      */
     protected $signature = 'scrape:vnx';
+    public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
+    public $imgUri = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+    protected $output;
+    protected $numPage = 5;
+
 
     /**
      * The console command description.
@@ -44,18 +49,33 @@ class scrapeVnx extends Command
         'thoi-su',
 
     ];
-    public $pagearr = [
-        '-p1',
-        '-p2',
-    ];
+    public $pageArr = array();
+//    [
+//        '-p1',
+//         '-p2',
+//         '-p3',
+//         '-p4',
+//        '/p1',
+//        '/p2',
+//    ];
 
-//    public function page($numPage)
-//    {
-//        for ($i = 1; $i < $numPage; $i++) {
-//            return array_push($this->pagearr, "-p" . $i);
-//        }
-//
-//    }
+
+    public function page($numPage, $category)
+    {
+        unset($this->pageArr);
+        $this->pageArr = array();
+        if ($category == 1 || $category == 6 || $category == 8 || $category == 9 || $category == 10) {
+            for ($i = 1; $i <= $numPage; $i++) {
+                 array_push($this->pageArr, "-p" . $i);
+            }
+        } else {
+            for ($i = 1; $i <= $numPage; $i++) {
+                 array_push($this->pageArr, "/p" . $i);
+            }
+        }
+
+
+    }
 
 
     /**
@@ -71,28 +91,51 @@ class scrapeVnx extends Command
     /**
      * @return void
      */
+
     public function handle()
     {
-        $countnews = 1;
-
-
+        $countNews = 1;
         $category = $this->categories;
+
         for ($i = 0; $i < count($category); $i++) {
-            foreach ($this->pagearr as $pageNumber) {
+
+            $this->page($this->numPage, $i + 1);
+
+            foreach ($this->pageArr as $pageNumber) {
                 $crawler = Goutte::request('GET', 'https://vnexpress.net/' . $category[$i] . $pageNumber);
                 $linkPost = $crawler->filter('section.sidebar_1 h4.title_news a.icon_commend')->each(function ($node) {
-
+                    if ($node->attr('href') == null) {
+                        return $node->attr('data-href');
+                    }
                     return $node->attr('href');
                 });
 
+                // waiting 10s
+                echo "\n" . "Waiting.... to next " . $category[$i] . $pageNumber . "\n";
+                $progressBar = new ProgressBar($this->output, 100);
+                $progressBar->start();
+                $u = 0;
+                while ($u++ < 30) {
+                    sleep(1);
+                    $progressBar->advance(100/30);
+                }
+                $progressBar->finish();
+
+
                 foreach ($linkPost as $link) {
                     self::scrapePost($link, $i + 1);
-                    echo "Posted Vnx " . $countnews++ . "\n";
+                    echo "\n" . "Posted Vnx " . $countNews++;
                 }
             }
+            //delete duplicate
+            News::deletedNewsDuplicate($this->output);
+            News::deletedNewsNoImg();
         }
 
-        echo "\n" . "Total: " . $countnews . " records" . "\n";
+        //count total records
+        $totalRecords = $countNews - 1;
+        echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
+      //  $this->scrapePost('https://vnexpress.net/the-gioi/con-trai-ong-ho-cam-dao-co-the-sap-tro-thanh-bi-thu-tay-an-3892607.html', 1);
     }
 
 
@@ -101,9 +144,11 @@ class scrapeVnx extends Command
      * @param $idCategory
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory)
     {
+
         try {
+
 
             $crawler = Goutte::request('GET', $url);
 
@@ -123,7 +168,7 @@ class scrapeVnx extends Command
                 }
             }
 
-            // $slug = str_slug($title);
+            //.description
 
             $description = $crawler->filter('h2.short_intro.txt_666')->each(function ($node) {
                 return $node->text();
@@ -137,21 +182,42 @@ class scrapeVnx extends Command
                 if (isset($description[0])) {
                     $description = $description[0];
                 } else {
-                    $description = '';
+                    $description = $crawler->filter('.description')->each(function ($node) {
+                        return $node->text();
+                    });
+                    if (isset($description[0])) {
+                        $description = $description[0];
+                    } else {
+                        $description = '';
+                    }
+
                 }
             }
-//        $description = str_replace('', '', $description);
 
             $img = $crawler->filter('.fck_detail.width_common.block_ads_connect img')->each(function ($node) {
                 return $node->attr('src');
             });
             if (isset($img[0])) {
                 $img = $img[0];
+                if ($img == $this->imgUri) {
+                    $img = '';
+                }
             } else {
-                $img = '';
+                $img = $crawler->filter('.block_thumb_slide_show img')->each(function ($node) {
+                    return $node->attr('src');
+                });
+                if (isset($img[0])) {
+                    $img = $img[0];
+                    if ($img == $this->imgUri) {
+                        $img = '';
+                    }
+                } else {
+                    $img = ' ';
+                }
             }
-
-            $content = $crawler->filter('.fck_detail.width_common.block_ads_connect')->each(function ($node) {
+            // .content_detail.fck_detail.width_common
+            //.fck_detail.width_common.block_ads_connect
+            $content = $crawler->filter('.content_detail.fck_detail.width_common')->each(function ($node) {
                 return $node->html();
             });
 
@@ -159,7 +225,16 @@ class scrapeVnx extends Command
 
                 $content = $content[0];
             } else {
-                $content = '';
+                $content = $crawler->filter('.fck_detail.width_common.block_ads_connect')->each(function ($node) {
+                    return $node->html();
+                });
+
+                if (isset($content[0])) {
+
+                    $content = $content[0];
+                } else {
+                    $content = '';
+                }
             }
 
 
@@ -174,14 +249,18 @@ class scrapeVnx extends Command
                 'description' => $description,
                 'content' => $content,
                 'source' => $url,
+                'user_id' => 2,
                 'author' => '',
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 
 
             News::installNews($data);
 
+
         } catch (\Exception $exception) {
+            News::deletedNewsDuplicate($this->output);
             return response()->json($exception->getMessage(), 500);
         }
 

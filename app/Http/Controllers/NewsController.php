@@ -17,17 +17,33 @@ class NewsController extends Controller
 
     public function index()
     {
-        $list = News::list();
+                $list = News::list();
+        if ($list !== null) {
+            return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
+        } else {
+            return response()->json(['data' => $list], 404);
+        }
+
+//        $list = News::list();
+//        if ($list !== null) {
+//            return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
+//        } else {
+//            return response()->json(['data' => $list], 404);
+//        }
+    }
+
+    public function listByCategoryId($id)
+    {
+        $list = News::getByCategoryId($id);
         if ($list !== null) {
             return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
         } else {
             return response()->json(['data' => $list], 404);
         }
     }
-
-    public function listByCategory($id)
+    public function listByCategoryUrl($url)
     {
-        $list = News::getByCategoryId($id);
+        $list = News::getByCategoryUrl($url);
         if ($list !== null) {
             return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
         } else {
@@ -68,9 +84,19 @@ class NewsController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showId($id)
     {
         $news = News::getById($id);
+        if ($news !== null) {
+            return response()->json(['data' => $news], 200);
+        } else {
+            return response()->json(['data' => $news], 404);
+        }
+    }
+
+    public function showUrl($url)
+    {
+        $news = News::getByUrlTitle($url);
         if ($news !== null) {
             return response()->json(['data' => $news], 200);
         } else {

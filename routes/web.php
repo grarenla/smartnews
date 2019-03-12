@@ -13,15 +13,22 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'index')->name('dashboard');
-Route::group(['prefix' => '/news'], function () {
+Route::get('/login', 'AuthAdminController@loginView');
+Route::post('/login', 'AuthAdminController@login');
+Route::get('/logout', 'AuthAdminController@logout');
 
-    Route::get('/', 'NewsAdminController@index')->name('news.list');
+Route::group(['prefix' => '/', 'middleware' => 'adminLogin'], function () {
 
-    Route::get('/create', 'NewsAdminController@createView')->name('form.create');
-    Route::post('/create', 'NewsAdminController@store');
+    Route::get('/', 'AuthAdminController@index')->name('/');
 
-    Route::get('/edit/{id}', 'NewsAdminController@editView')->name('form.edit');
-    Route::post('/edit/{id}', 'NewsAdminController@update');
-//        Route::view('/create', 'pages.news.news-form')->name('news.form');
+    Route::group(['prefix' => '/news'], function () {
+
+        Route::get('/', 'NewsAdminController@index')->name('news.list');
+
+        Route::get('/create', 'NewsAdminController@createView')->name('form.create');
+        Route::post('/create', 'NewsAdminController@store');
+
+        Route::get('/edit/{id}', 'NewsAdminController@editView')->name('form.edit');
+        Route::post('/edit/{id}', 'NewsAdminController@update');
+    });
 });
