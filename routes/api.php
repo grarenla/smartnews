@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,12 +33,14 @@ Route::get('/category', 'CategoryController@index'); // list category
 
 // Auth
 Route::post('register', 'ApiAuthController@register'); // register
+Route::get('register/activate/{token}', 'ApiAuthController@registerActivate');
 Route::post('login', 'ApiAuthController@login'); // login(return token)
 
 
 Route::group(['middleware' => 'jwt.auth'], function () {
     Route::get('auth', 'ApiAuthController@user'); // get info user
 });
+//Auth::routes(['verify' => true]);
 //Route::middleware('cors')->get('/news', 'NewsController@index');
 
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
