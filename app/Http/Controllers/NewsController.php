@@ -56,7 +56,7 @@ class NewsController extends Controller
     {
         $list = News::getByUserId($id);
         if ($list !== null) {
-            return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
+            return response()->json(['data' => $list], 200);
         } else {
             return response()->json(['data' => $list], 404);
         }
