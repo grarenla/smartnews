@@ -35,14 +35,14 @@ class scrape24H extends Command
 
     public $categories = [
 
-        'tin-tuc-quoc-te-c415.html',
-        'kinh-doanh-c161.html',
-        'the-thao-c101.html',
-        'suc-khoe-doi-song-c62.html',
-        'doi-song-showbiz-c729.html',
-        'cong-nghe-thong-tin-c55.html',
-        'du-lich-24h-c76.html',
-        'an-ninh-hinh-su-c51.html',
+        'tin-tuc-quoc-te-c415',
+        'kinh-doanh-c161',
+        'the-thao-c101',
+        'suc-khoe-doi-song-c62',
+        'doi-song-showbiz-c729',
+        'cong-nghe-thong-tin-c55',
+        'du-lich-24h-c76',
+        'an-ninh-hinh-su-c51',
 
 
     ];
@@ -81,7 +81,7 @@ class scrape24H extends Command
         $this->page($this->numPage);
         for ($i = 0; $i < count($category); $i++) {
             foreach ($this->pagearr as $pageNumber) {
-                $crawler = Goutte::request('GET', 'https://www.24h.com.vn/' . $category[$i] . $pageNumber);
+                $crawler = Goutte::request('GET', 'https://www.24h.com.vn/' . $category[$i].'.html' . $pageNumber);
                 $linkPost = $crawler->filter('article.bxDoiSbIt span.nwsTit a')->each(function ($node) {
 
                     return $node->attr('href');
@@ -100,7 +100,7 @@ class scrape24H extends Command
 
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1);
+                    self::scrapePost($link, $i + 1, $category[$i]);
                     echo "\n"."Posted 24h " . $countNews++ ;
                 }
             }
@@ -120,9 +120,10 @@ class scrape24H extends Command
     /**
      * @param $url
      * @param $idCategory
+     * @param $categoryUrl
      * @return \Illuminate\Http\JsonResponse
      */
-    public  function scrapePost($url, $idCategory)
+    public  function scrapePost($url, $idCategory, $categoryUrl)
     {
         try {
 
@@ -145,6 +146,9 @@ class scrape24H extends Command
                     $title = '';
                 }
             }
+
+            //Băm title để làm friendly url
+            $slug = str_slug($title);
 
             $description = $crawler->filter('h2.ctTp')->each(function ($node) {
                 return $node->text();
@@ -208,7 +212,8 @@ class scrape24H extends Command
                 'source' => $url,
                 'user_id' => 2,
                 'author' => '',
-                'url' => $title,
+               // 'url' => $categoryUrl.'/'.$slug.'-'.round(microtime(true) * 1000),
+                'url' => $slug.'-'.round(microtime(true) * 1000),
                 'category_id' => $idCategory
             ];
 

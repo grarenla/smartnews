@@ -41,6 +41,7 @@ class NewsController extends Controller
             return response()->json(['data' => $list], 404);
         }
     }
+
     public function listByCategoryUrl($url)
     {
         $list = News::getByCategoryUrl($url);
@@ -50,6 +51,17 @@ class NewsController extends Controller
             return response()->json(['data' => $list], 404);
         }
     }
+
+    public function listNewsByIdUser($id)
+    {
+        $list = News::getByUserId($id);
+        if ($list !== null) {
+            return response()->json(['data' => $list, 'paginate_view' => View::make('paginate', ['data' => $list])->render()], 200);
+        } else {
+            return response()->json(['data' => $list], 404);
+        }
+    }
+
 
     /**
      * Show the form for creating a new resource.

@@ -25,7 +25,7 @@ class scrapeVnx extends Command
     public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
     public $imgUri = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     protected $output;
-    protected $numPage = 5;
+    protected $numPage = 2;
 
 
     /**
@@ -115,15 +115,15 @@ class scrapeVnx extends Command
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();
                 $u = 0;
-                while ($u++ < 30) {
+                while ($u++ < 10) {
                     sleep(1);
-                    $progressBar->advance(100/30);
+                    $progressBar->advance(100/10);
                 }
                 $progressBar->finish();
 
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1);
+                    self::scrapePost($link, $i + 1, $category[$i]);
                     echo "\n" . "Posted Vnx " . $countNews++;
                 }
             }
@@ -142,9 +142,10 @@ class scrapeVnx extends Command
     /**
      * @param $url
      * @param $idCategory
+     * @param $categoryUrl
      * @return \Illuminate\Http\JsonResponse
      */
-    public function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory, $categoryUrl)
     {
 
         try {
@@ -167,6 +168,10 @@ class scrapeVnx extends Command
                     $title = '';
                 }
             }
+
+            //Băm title để làm friendly url
+           $slug = str_slug($title);
+
 
             //.description
 
@@ -251,12 +256,13 @@ class scrapeVnx extends Command
                 'source' => $url,
                 'user_id' => 2,
                 'author' => '',
-                'url' => $title,
+               // 'url' => $categoryUrl.'/'.$slug.'-'.round(microtime(true) * 1000),
+                'url' => $slug.'-'.round(microtime(true) * 1000),
                 'category_id' => $idCategory
             ];
 
 
-            News::installNews($data);
+          News::installNews($data);
 
 
         } catch (\Exception $exception) {

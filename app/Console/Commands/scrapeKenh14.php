@@ -36,14 +36,14 @@ class scrapeKenh14 extends Command
 
     public $categories = [
 //        'thoi-su.html',
-        'the-gioi.chn',
+        'the-gioi',
         ' ',
-        'sport.chn',
-        'suc-khoe-gioi-tinh.chn',
-        'doi-song.chn',
-        '2-tek/cong-nghe-vui.chn',
-        'doi-song/du-lich.chn',
-        'xa-hoi/phap-luat.chn',
+        'sport',
+        'suc-khoe-gioi-tinh',
+        'doi-song',
+        '2-tek/cong-nghe-vui',
+        'doi-song/du-lich',
+        'xa-hoi/phap-luat',
 
     ];
 
@@ -70,7 +70,7 @@ class scrapeKenh14 extends Command
         $category = $this->categories;
 
         for ($i = 0; $i < count($category); $i++) {
-            $crawler = Goutte::request('GET', 'http://kenh14.vn/' . $category[$i]);
+            $crawler = Goutte::request('GET', 'http://kenh14.vn/' . $category[$i].'.chn');
             $linkPost = $crawler->filter('h3.knswli-title a')->each(function ($node) {
 
                 return $node->attr('href');
@@ -88,7 +88,7 @@ class scrapeKenh14 extends Command
             $progressBar->finish();
 
             foreach ($linkPost as $link) {
-                self::scrapePost($link, $i + 1);
+                self::scrapePost($link, $i + 1, $category[$i]);
                 echo "\n"."Posted Kenh14 " . $countNews++ ;
             }
             //delete duplicate
@@ -105,9 +105,10 @@ class scrapeKenh14 extends Command
     /**
      * @param $url
      * @param $idCategory
+     * @param $categoryUrl
      * @return \Illuminate\Http\JsonResponse
      */
-    public function scrapePost($url, $idCategory)
+    public function scrapePost($url, $idCategory, $categoryUrl)
     {
         try {
             $crawler = Goutte::request('GET', $url);
@@ -120,6 +121,9 @@ class scrapeKenh14 extends Command
             } else {
                 $title = '';
             }
+
+            //Băm title để làm friendly url
+            $slug = str_slug($title);
 
             $description = $crawler->filter('h2.knc-sapo')->each(function ($node) {
                 return $node->text();
@@ -163,7 +167,8 @@ class scrapeKenh14 extends Command
                 'content' => $content,
                 'source' => 'http://kenh14.vn/' . $url,
                 'user_id' => 2,
-                'url' => $title,
+               // 'url' => $categoryUrl.'/'.$slug.'-'.round(microtime(true) * 1000),
+                'url' => $slug.'-'.round(microtime(true) * 1000),
                 'author' => '',
                 'category_id' => $idCategory
             ];
