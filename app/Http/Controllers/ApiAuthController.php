@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterFormRequest;
+use App\Notifications\SignupActivate;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
@@ -18,10 +19,13 @@ class ApiAuthController extends Controller
         $user->email = $params['email'];
         $user->name = $params['name'];
         $user->password = bcrypt($params['password']);
-        $user->role = "employee";
+        $user->activation_token = str_random(60);
+        $user->role = "user";
         $user->save();
-
-        return response()->json($user, Response::HTTP_OK);
+        $user->notify(new SignupActivate($user));
+        return response()->json([
+            'message' => 'Successfully created user!'
+        ], 201);
     }
 
     public function login(Request $request)
@@ -54,10 +58,24 @@ class ApiAuthController extends Controller
         return response(JWTAuth::getToken(), Response::HTTP_OK);
     }
 
+    public function registerActivate($token)
+    {
+        $user = User::where('activation_token', $token)->first();
+        if (!$user) {
+            return response()->json([
+                'message' => 'This activation token is invalid.'
+            ], 404);
+        }
+        $user->active = true;
+        $user->activation_token = '';
+        $user->save();
+        return redirect("https://smart-news-nal.herokuapp.com");
+    }
+
     public function registerOrLogin(Request $request)
-    {   
+    {
         $params = $request->only('email', 'name', 'password');
-        $pass = $request['password'];        
+        $pass = $request['password'];
         $user = User::where(['email' => $params['email']])->get();
         // dd($user);
         if(count($user) == 0){

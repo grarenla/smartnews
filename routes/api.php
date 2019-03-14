@@ -26,12 +26,14 @@ Route::put('/news/{id}', 'NewsController@update'); // edit news
 Route::delete('/news/{id}', 'NewsController@destroy'); // delete news
 //Route::get('/category/news/{id}', 'NewsController@listByCategoryId'); //get list news by category_id
 Route::get('/category/news/{url}', 'NewsController@listByCategoryUrl'); //get list news by category_id
+Route::get('/news/user/{id}', 'NewsController@listNewsByIdUser'); //get list news by user_id
 
 //API category
 Route::get('/category', 'CategoryController@index'); // list category
 
 // Auth
 Route::post('register', 'ApiAuthController@register'); // register
+Route::get('register/activate/{token}', 'ApiAuthController@registerActivate');
 Route::post('login', 'ApiAuthController@login'); // login(return token)
 
 

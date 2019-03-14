@@ -80,7 +80,7 @@ class scrapeDantri extends Command
                     return $node->attr('href');
                 });
 
-                    // waiting 10s
+                // waiting 10s
                 echo "\n" . "Waiting.... to next " . $category[$i] . $pageNumber . "\n";
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();

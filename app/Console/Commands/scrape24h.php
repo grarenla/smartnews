@@ -176,8 +176,8 @@ class scrape24H extends Command
             if (isset($img[0])) {
 
                 if($img[0] == 'https://cdn.24h.com.vn/images/2014/icon-before-page.png'){
-                   if($img[1] == 'https://cdn.24h.com.vn/images/2014/icon-after-page.png')
-                    $img = $img[2];
+                    if($img[1] == 'https://cdn.24h.com.vn/images/2014/icon-after-page.png')
+                        $img = $img[2];
 
                 }else{
                     $img = $crawler->filter('.nwsHt.nwsUpgrade img')->each(function ($node) {

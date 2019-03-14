@@ -125,6 +125,21 @@ class News extends Model
      * @param $id
      * @return string
      */
+    public static function getByUserId($id)
+    {
+        try {
+            $list = News::join('categories','news.category_id','=','categories.id')->where('user_id', $id)->select('news.*', 'categories.name as category_name')->orderBy('news.id', 'desc')->get();
+            return $list;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getByCategoryUrl($url)
     {
         try {
