@@ -66,11 +66,11 @@ class scrapeVnx extends Command
         $this->pageArr = array();
         if ($category == 1 || $category == 6 || $category == 8 || $category == 9 || $category == 10) {
             for ($i = 1; $i <= $numPage; $i++) {
-                 array_push($this->pageArr, "-p" . $i);
+                array_push($this->pageArr, "-p" . $i);
             }
         } else {
             for ($i = 1; $i <= $numPage; $i++) {
-                 array_push($this->pageArr, "/p" . $i);
+                array_push($this->pageArr, "/p" . $i);
             }
         }
 
@@ -135,7 +135,7 @@ class scrapeVnx extends Command
         //count total records
         $totalRecords = $countNews - 1;
         echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
-      //  $this->scrapePost('https://vnexpress.net/the-gioi/con-trai-ong-ho-cam-dao-co-the-sap-tro-thanh-bi-thu-tay-an-3892607.html', 1);
+        //  $this->scrapePost('https://vnexpress.net/the-gioi/con-trai-ong-ho-cam-dao-co-the-sap-tro-thanh-bi-thu-tay-an-3892607.html', 1);
     }
 
 
