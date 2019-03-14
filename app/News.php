@@ -128,7 +128,7 @@ class News extends Model
     public static function getByUserId($id)
     {
         try {
-            $list = News::join('categories','news.category_id','=','categories.id')->where('user_id', $id)->select('news.*', 'categories.name as category_name')->get();
+            $list = News::join('categories','news.category_id','=','categories.id')->where('user_id', $id)->select('news.*', 'categories.name as category_name')->orderBy('news.id', 'desc')->get();
             return $list;
         } catch (Exception $e) {
             return $e->getMessage();
