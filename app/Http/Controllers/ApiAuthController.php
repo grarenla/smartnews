@@ -26,7 +26,7 @@ class ApiAuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');        
+        $credentials = $request->only('email', 'password');
         if (!($token = JWTAuth::attempt($credentials))) {
             return response()->json([
                 'status' => 'error',
