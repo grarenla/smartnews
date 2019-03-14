@@ -32,6 +32,7 @@ Route::get('/category', 'CategoryController@index'); // list category
 
 // Auth
 Route::post('register', 'ApiAuthController@register'); // register
+Route::get('register/activate/{token}', 'ApiAuthController@registerActivate');
 Route::post('login', 'ApiAuthController@login'); // login(return token)
 
 
