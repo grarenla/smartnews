@@ -47,7 +47,7 @@ class News extends Model
             $news->author = $newsJson['author'];
             $news->category_id = $newsJson['category_id'];
             $news->user_id = $newsJson['user_id'];
-            $news->url = $newsJson['url'];
+            $news->url = str_slug($newsJson['title']).'-'.round(microtime(true) * 1000); //(new \DateTime)->getTimestamp();  //Băm title để làm friendly url
             $news->created_at = Carbon::now();
             $news->updated_at = Carbon::now();
             $news->save();
@@ -57,7 +57,6 @@ class News extends Model
         }
 
     }
-
 
     /**
      * @param $newsJson
@@ -74,7 +73,6 @@ class News extends Model
             $news->source = $newsJson['source'];
             $news->author = $newsJson['author'];
             $news->category_id = $newsJson['category_id'];
-            $news->url = str_slug($newsJson['title']).'-'.round(microtime(true) * 1000);  //Băm title để làm friendly url
             $news->updated_at = Carbon::now();
             $news->save();
             return $news;
@@ -138,7 +136,6 @@ class News extends Model
 
     }
 
-
     /**
      * @param $id
      * @return string
@@ -188,12 +185,13 @@ class News extends Model
             $progressBar->advance(100/count($duplicateRecords));
             $countNumDelete++;
         }
-        echo "\n" ."Success delete ".$countNumDelete." record duplicate";
-        echo "\n"."Done !!!";
 
         $progressBar->finish();
         if($countNumDelete > 0){
 
+            echo "\n" ."Success delete ".$countNumDelete." record duplicate";
+            echo "\n"."Done !!!";
+        }else{
             echo "\n"."No record duplicate";
         }
 

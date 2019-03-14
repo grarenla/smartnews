@@ -80,7 +80,7 @@ class scrapeDantri extends Command
                     return $node->attr('href');
                 });
 
-                    // waiting 10s
+                // waiting 10s
                 echo "\n" . "Waiting.... to next " . $category[$i] . $pageNumber . "\n";
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();
@@ -92,7 +92,7 @@ class scrapeDantri extends Command
                 $progressBar->finish();
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost('https://dantri.com.vn' . $link, $i + 1, $category[$i]);
+                    self::scrapePost('https://dantri.com.vn' . $link, $i + 1);
                     echo "\n"."Posted Dantri " . $countNews++ ;
                 }
             }
@@ -113,10 +113,9 @@ class scrapeDantri extends Command
     /**
      * @param $url
      * @param $idCategory
-     * @param $categoryUrl
      * @return \Illuminate\Http\JsonResponse
      */
-    public function scrapePost($url, $idCategory, $categoryUrl)
+    public function scrapePost($url, $idCategory)
     {
         try {
 
@@ -133,9 +132,6 @@ class scrapeDantri extends Command
             }
 
             $title = trim($title, ' ');
-
-            //Băm title để làm friendly url
-            $slug = str_slug($title);
 
 
 
@@ -196,8 +192,7 @@ class scrapeDantri extends Command
                 'source' => $url,
                 'user_id' => 2,
                 'author' => '',
-               // 'url' => $categoryUrl.'/'.$slug.'-'.round(microtime(true) * 1000),
-                'url' => $slug.'-'.round(microtime(true) * 1000),
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 

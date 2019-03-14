@@ -95,11 +95,11 @@ class scrapeOldDantri extends Command
             }
         }
 
-       // self::scrapePost('https://dantri.com.vn/the-gioi/ong-trump-bac-tin-huy-tap-tran-quan-su-de-nhuong-bo-ong-kim-jongun-20190305070307721.htm', 1);
+        // self::scrapePost('https://dantri.com.vn/the-gioi/ong-trump-bac-tin-huy-tap-tran-quan-su-de-nhuong-bo-ong-kim-jongun-20190305070307721.htm', 1);
         //delete duplicate
         News::deletedNewsDuplicate();
-      //  count total records
-          echo "\n" . "Total: " . $countnews . " records" . "\n";
+        //  count total records
+        echo "\n" . "Total: " . $countnews . " records" . "\n";
     }
 
 
@@ -186,8 +186,8 @@ class scrapeOldDantri extends Command
                 'category_id' => $idCategory
             ];
 
-         //   echo $description;
-             News::installNews($data);
+            //   echo $description;
+            News::installNews($data);
 
         } catch (\Exception $exception) {
             return response()->json($exception->getMessage(), 500);

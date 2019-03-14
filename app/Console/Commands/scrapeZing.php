@@ -81,7 +81,7 @@ class scrapeZing extends Command
 
 
             foreach ($linkPost as $link) {
-                self::scrapePost($link, $i + 1, $category[$i]);
+                self::scrapePost($link, $i + 1);
                 echo "\n"."Posted Zing " . $countNews++ ;
             }
 
@@ -100,10 +100,9 @@ class scrapeZing extends Command
     /**
      * @param $url
      * @param $idCategory
-     * @param $categoryUrl
      * @return \Illuminate\Http\JsonResponse
      */
-    public function scrapePost($url, $idCategory, $categoryUrl)
+    public function scrapePost($url, $idCategory)
     {
         try {
             $crawler = Goutte::request('GET', $url);
@@ -117,8 +116,6 @@ class scrapeZing extends Command
                 $title = '';
             }
 
-            //Băm title để làm friendly url
-            $slug = str_slug($title);
 
             $description = $crawler->filter('p.the-article-summary')->each(function ($node) {
                 return $node->text();
@@ -168,8 +165,7 @@ class scrapeZing extends Command
                 'source' => 'https://news.zing.vn' . $url,
                 'user_id' => 2,
                 'author' => '',
-              //  'url' => $categoryUrl.'/'.$slug.'-'.round(microtime(true) * 1000),
-                'url' => $slug.'-'.round(microtime(true) * 1000),
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 

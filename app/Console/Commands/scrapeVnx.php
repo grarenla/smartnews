@@ -25,7 +25,7 @@ class scrapeVnx extends Command
     public $imgDefault = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png';
     public $imgUri = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     protected $output;
-    protected $numPage = 2;
+    protected $numPage = 5;
 
 
     /**
@@ -66,11 +66,11 @@ class scrapeVnx extends Command
         $this->pageArr = array();
         if ($category == 1 || $category == 6 || $category == 8 || $category == 9 || $category == 10) {
             for ($i = 1; $i <= $numPage; $i++) {
-                 array_push($this->pageArr, "-p" . $i);
+                array_push($this->pageArr, "-p" . $i);
             }
         } else {
             for ($i = 1; $i <= $numPage; $i++) {
-                 array_push($this->pageArr, "/p" . $i);
+                array_push($this->pageArr, "/p" . $i);
             }
         }
 
@@ -115,15 +115,15 @@ class scrapeVnx extends Command
                 $progressBar = new ProgressBar($this->output, 100);
                 $progressBar->start();
                 $u = 0;
-                while ($u++ < 10) {
+                while ($u++ < 30) {
                     sleep(1);
-                    $progressBar->advance(100/10);
+                    $progressBar->advance(100/30);
                 }
                 $progressBar->finish();
 
 
                 foreach ($linkPost as $link) {
-                    self::scrapePost($link, $i + 1, $category[$i]);
+                    self::scrapePost($link, $i + 1);
                     echo "\n" . "Posted Vnx " . $countNews++;
                 }
             }
@@ -135,17 +135,16 @@ class scrapeVnx extends Command
         //count total records
         $totalRecords = $countNews - 1;
         echo "\n" . "Total obtained: " . $totalRecords . " records" . "\n";
-      //  $this->scrapePost('https://vnexpress.net/the-gioi/con-trai-ong-ho-cam-dao-co-the-sap-tro-thanh-bi-thu-tay-an-3892607.html', 1);
+        //  $this->scrapePost('https://vnexpress.net/the-gioi/con-trai-ong-ho-cam-dao-co-the-sap-tro-thanh-bi-thu-tay-an-3892607.html', 1);
     }
 
 
     /**
      * @param $url
      * @param $idCategory
-     * @param $categoryUrl
      * @return \Illuminate\Http\JsonResponse
      */
-    public function scrapePost($url, $idCategory, $categoryUrl)
+    public function scrapePost($url, $idCategory)
     {
 
         try {
@@ -168,10 +167,6 @@ class scrapeVnx extends Command
                     $title = '';
                 }
             }
-
-            //Băm title để làm friendly url
-           $slug = str_slug($title);
-
 
             //.description
 
@@ -256,13 +251,12 @@ class scrapeVnx extends Command
                 'source' => $url,
                 'user_id' => 2,
                 'author' => '',
-               // 'url' => $categoryUrl.'/'.$slug.'-'.round(microtime(true) * 1000),
-                'url' => $slug.'-'.round(microtime(true) * 1000),
+                'url' => $title,
                 'category_id' => $idCategory
             ];
 
 
-          News::installNews($data);
+            News::installNews($data);
 
 
         } catch (\Exception $exception) {
