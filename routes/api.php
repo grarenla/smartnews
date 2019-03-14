@@ -38,6 +38,8 @@ Route::post('login', 'ApiAuthController@login'); // login(return token)
 Route::group(['middleware' => 'jwt.auth'], function () {
     Route::get('auth', 'ApiAuthController@user'); // get info user
 });
+
+Route::post('fb-google', 'ApiAuthController@registerOrLogin');
 //Route::middleware('cors')->get('/news', 'NewsController@index');
 
 //Route::middleware('cors')->get('/news/{id}', 'NewsController@show');
