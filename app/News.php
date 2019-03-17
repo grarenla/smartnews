@@ -50,12 +50,42 @@ class News extends Model
             $news->url = str_slug($newsJson['title']).'-'.round(microtime(true) * 1000); //(new \DateTime)->getTimestamp();  //Băm title để làm friendly url
             $news->created_at = Carbon::now();
             $news->updated_at = Carbon::now();
-            $news->save();
-            return $news;
+            $string = $newsJson['title'].$newsJson['description'].$newsJson['content'];
+            // dd($newsJson['category_id']);
+            // dd('ddd',News::checkSimilarity($string, $newsJson['category_id']));
+            // $news->save();
+            if(News::checkSimilarity($string, $newsJson['category_id'])){
+                $news->save();
+                // dd($news);
+                return $news;
+            } else {
+                $object = new \stdClass();
+                $object->id = 'dub';
+                return  $object;
+            }
+            
+            
+            
         } catch (Exception $e) {
             return $e->getMessage();
         }
 
+    }
+
+    public static function checkSimilarity($string, $category_id){
+        $samples = News::where(['category_id'=> $category_id])-> get();
+        
+        foreach($samples as $sample) {
+            // dd($sample['description']);
+            $comparedString = $sample['title'].$sample['description'].$sample['content'];
+            similar_text($comparedString, $string, $percentage);
+            // dd($percentage);
+            if($percentage>=50){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
